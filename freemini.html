@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breaking Free from the Recycle Bin</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+        #gameCanvas {
+            display: block;
+            background-color: #0a0a1a;
+        }
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #0ff;
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            text-shadow: 0 0 5px #0ff;
+        }
+        #startScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 20, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #0ff;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+        #startButton {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background-color: #0a0a3a;
+            color: #0ff;
+            border: 2px solid #0ff;
+            border-radius: 5px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 0 10px #0ff;
+        }
+        #startButton:hover {
+            background-color: #0ff;
+            color: #000;
+        }
+        #winScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 20, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+        #password {
+            font-size: 32px;
+            margin: 20px;
+            padding: 15px;
+            background-color: #000;
+            border: 2px solid #0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="score">0</div>
+    
+    <div id="startScreen">
+        <h1>BREAKING FREE FROM THE RECYCLE BIN</h1>
+        <p>Usa las flechas ← → para moverte y ↑ para saltar</p>
+        <p>Esquiva los virus y alcanza una puntuación de 15 para obtener la contraseña</p>
+        <button id="startButton">INICIAR</button>
+    </div>
+    
+    <div id="winScreen">
+        <h1>¡ESCAPASTE DEL RECYCLE BIN!</h1>
+        <p>Tu premio es la contraseña:</p>
+        <div id="password">AI tools</div>
+        <p>Puntuación final: <span id="finalScore">0</span></p>
+        <button id="restartButton">JUGAR DE NUEVO</button>
+    </div>
+
+    <script>
+        // Configuración del juego
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const startScreen = document.getElementById('startScreen');
+        const startButton = document.getElementById('startButton');
+        const winScreen = document.getElementById('winScreen');
+        const finalScoreElement = document.getElementById('finalScore');
+        const restartButton = document.getElementById('restartButton');
+
+        // Ajustar tamaño del canvas
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Variables del juego
+        let gameRunning = false;
+        let score = 0;
+        let speed = 3;
+        let gameSpeed = 3;
+        let obstacles = [];
+        let lastObstacleTime = 0;
+        let animationId;
+        let neonLines = [];
+        let backgroundGrid = [];
+        
+        // Imágenes
+        let playerImage = new Image();
+        playerImage.src = 'https://ecwatforcanvas.github.io/Images/Student.png';
+        
+        let virusImage = new Image();
+        virusImage.src = 'https://ecwatforcanvas.github.io/Images/viruz.png';
+
+        // Personaje
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height - 180,
+            width: 70,
+            height: 100,
+            speedX: 0,
+            speedY: 0,
+            jumping: false,
+            draw() {
+                if (playerImage.complete) {
+                    ctx.drawImage(playerImage, this.x - this.width/2, this.y - this.height, this.width, this.height);
+                } else {
+                    ctx.fillStyle = '#ff00aa';
+                    ctx.fillRect(this.x - this.width/2, this.y - this.height, this.width, this.height);
+                }
+            },
+            update() {
+                this.x += this.speedX;
+                
+                if (this.jumping) {
+                    this.y += this.speedY;
+                    this.speedY += 0.5;
+                    
+                    if (this.y > canvas.height - 180) {
+                        this.y = canvas.height - 180;
+                        this.jumping = false;
+                    }
+                }
+                
+                if (this.x < this.width/2) this.x = this.width/2;
+                if (this.x > canvas.width - this.width/2) this.x = canvas.width - this.width/2;
+            },
+            jump() {
+                if (!this.jumping) {
+                    this.jumping = true;
+                    this.speedY = -15;
+                }
+            }
+        };
+
+        // Obstáculos (virus)
+        class Obstacle {
+            constructor() {
+                this.width = 60;
+                this.height = 60;
+                this.x = Math.random() * (canvas.width - this.width);
+                this.y = canvas.height - 400;
+                this.rotation = 0;
+                this.rotationSpeed = Math.random() * 4 - 2;
+            }
+            
+            draw() {
+                if (virusImage.complete) {
+                    ctx.save();
+                    ctx.translate(this.x + this.width/2, this.y - this.height/2);
+                    ctx.rotate(this.rotation * Math.PI / 180);
+                    ctx.drawImage(virusImage, -this.width/2, -this.height/2, this.width, this.height);
+                    ctx.restore();
+                } else {
+                    ctx.fillStyle = '#f00';
+                    ctx.beginPath();
+                    ctx.arc(this.x + this.width/2, this.y - this.height/2, this.width/2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            update() {
+                this.y += gameSpeed * 0.8;
+                this.rotation += this.rotationSpeed;
+            }
+        }
+
+        // Crear líneas de neón
+        function createNeonLines() {
+            for (let i = 0; i < 20; i++) {
+                neonLines.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    length: 50 + Math.random() * 100,
+                    color: `hsl(${Math.random() * 60 + 200}, 80%, 50%)`,
+                    speed: 1 + Math.random() * 3
+                });
+            }
+        }
+
+        // Crear grid de fondo
+        function createBackgroundGrid() {
+            for (let x = 0; x < canvas.width; x += 100) {
+                for (let y = 0; y < canvas.height; y += 100) {
+                    backgroundGrid.push({
+                        x: x,
+                        y: y,
+                        size: 2 + Math.random() * 3,
+                        alpha: 0.1 + Math.random() * 0.3
+                    });
+                }
+            }
+        }
+
+        // Dibujar fondo cyberpunk
+        function drawBackground() {
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#000011');
+            gradient.addColorStop(1, '#000033');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.1)';
+            backgroundGrid.forEach(point => {
+                ctx.globalAlpha = point.alpha;
+                ctx.fillRect(point.x, point.y, point.size, point.size);
+            });
+            ctx.globalAlpha = 1;
+            
+            neonLines.forEach(line => {
+                ctx.strokeStyle = line.color;
+                ctx.lineWidth = 2;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = line.color;
+                ctx.beginPath();
+                ctx.moveTo(line.x, line.y);
+                ctx.lineTo(line.x, line.y + line.length);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+                
+                line.y += line.speed;
+                if (line.y > canvas.height) {
+                    line.y = -line.length;
+                    line.x = Math.random() * canvas.width;
+                }
+            });
+            
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(50, 0);
+            ctx.lineTo(50, canvas.height);
+            ctx.moveTo(canvas.width - 50, 0);
+            ctx.lineTo(canvas.width - 50, canvas.height);
+            ctx.stroke();
+            
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+            ctx.lineWidth = 1;
+            for (let y = 0; y < canvas.height; y += 30) {
+                ctx.beginPath();
+                ctx.moveTo(50, y);
+                ctx.lineTo(canvas.width - 50, y);
+                ctx.stroke();
+            }
+        }
+
+        // Iniciar juego
+        function startGame() {
+            gameRunning = true;
+            startScreen.style.display = 'none';
+            winScreen.style.display = 'none';
+            score = 0;
+            scoreElement.textContent = score;
+            speed = 3;
+            gameSpeed = 3;
+            obstacles = [];
+            player.x = canvas.width / 2;
+            player.y = canvas.height - 180;
+            player.jumping = false;
+            player.speedX = 0;
+            player.speedY = 0;
+            
+            neonLines = [];
+            backgroundGrid = [];
+            createNeonLines();
+            createBackgroundGrid();
+            
+            gameLoop();
+        }
+
+        // Mostrar pantalla de victoria
+        function showWinScreen() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            finalScoreElement.textContent = score;
+            winScreen.style.display = 'flex';
+        }
+
+        // Bucle principal del juego
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBackground();
+            player.update();
+            player.draw();
+            
+            const now = Date.now();
+            if (now - lastObstacleTime > 2000 - score * 2 && gameRunning) {
+                obstacles.push(new Obstacle());
+                lastObstacleTime = now;
+            }
+            
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].update();
+                obstacles[i].draw();
+                
+                if (
+                    player.x + player.width/2 > obstacles[i].x &&
+                    player.x - player.width/2 < obstacles[i].x + obstacles[i].width &&
+                    player.y - player.height < obstacles[i].y &&
+                    player.y > obstacles[i].y - obstacles[i].height
+                ) {
+                    gameOver();
+                    return;
+                }
+                
+                if (obstacles[i].y > canvas.height) {
+                    obstacles.splice(i, 1);
+                    score++;
+                    scoreElement.textContent = score;
+                    
+                    // Comprobar si alcanzó la puntuación ganadora
+                    if (score >= 15) {
+                        showWinScreen();
+                        return;
+                    }
+                    
+                    if (score % 10 === 0) {
+                        gameSpeed += 0.3;
+                    }
+                }
+            }
+            
+            if (gameRunning) {
+                animationId = requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // Game over
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(0, canvas.height/2 - 50, canvas.width, 100);
+            
+            ctx.fillStyle = '#f00';
+            ctx.font = '40px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2);
+            ctx.fillStyle = '#0ff';
+            ctx.font = '20px Courier New';
+            ctx.fillText(`Puntuación: ${score}`, canvas.width/2, canvas.height/2 + 40);
+            ctx.textAlign = 'left';
+            
+            setTimeout(() => {
+                startScreen.style.display = 'flex';
+                startButton.textContent = 'REINTENTAR';
+            }, 1500);
+        }
+
+        // Event listeners
+        startButton.addEventListener('click', startGame);
+        restartButton.addEventListener('click', startGame);
+
+        window.addEventListener('keydown', (e) => {
+            if (!gameRunning) return;
+            
+            switch (e.key) {
+                case 'ArrowLeft':
+                    player.speedX = -8;
+                    break;
+                case 'ArrowRight':
+                    player.speedX = 8;
+                    break;
+                case 'ArrowUp':
+                    player.jump();
+                    break;
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                player.speedX = 0;
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Inicializar
+        createNeonLines();
+        createBackgroundGrid();
+    </script>
+</body>
+</html>
