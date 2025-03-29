@@ -85,6 +85,7 @@
     <div id="startScreen">
         <h1>BREAKING FREE FROM THE RECYCLE BIN</h1>
         <p>Usa las flechas ← → para moverte y ↑ para saltar</p>
+        <p>↓ para bajar escalones</p>
         <p>Esquiva los virus y alcanza una puntuación de 15 para obtener la contraseña</p>
         <button id="startButton">INICIAR</button>
     </div>
@@ -122,6 +123,12 @@
         let animationId;
         let neonLines = [];
         let backgroundGrid = [];
+        let decoratives = [];
+        let platforms = [
+            { x: 0, y: canvas.height - 200, width: canvas.width, height: 20 },
+            { x: 0, y: canvas.height - 100, width: canvas.width, height: 20 }
+        ];
+        let currentPlatformIndex = 0;
         
         // Imágenes
         let playerImage = new Image();
@@ -154,8 +161,8 @@
                     this.y += this.speedY;
                     this.speedY += 0.5;
                     
-                    if (this.y > canvas.height - 200) {
-                        this.y = canvas.height - 200;
+                    if (this.y > platforms[currentPlatformIndex].y) {
+                        this.y = platforms[currentPlatformIndex].y;
                         this.jumping = false;
                     }
                 }
@@ -168,8 +175,62 @@
                     this.jumping = true;
                     this.speedY = -15;
                 }
+            },
+            moveDown() {
+                if (!this.jumping && currentPlatformIndex < platforms.length - 1) {
+                    currentPlatformIndex++;
+                    this.y = platforms[currentPlatformIndex].y;
+                }
+            },
+            moveUp() {
+                if (!this.jumping && currentPlatformIndex > 0) {
+                    currentPlatformIndex--;
+                    this.y = platforms[currentPlatformIndex].y;
+                }
             }
         };
+
+        // Frases decorativas
+        class DecorativeText {
+            constructor() {
+                this.texts = ["Gemini", "Copilot", "ChatGPT", "DeepSeek"];
+                this.text = this.texts[Math.floor(Math.random() * this.texts.length)];
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = 10 + Math.random() * 20;
+                this.color = `hsl(${Math.random() * 60 + 200}, 80%, 50%)`;
+                this.speed = 0.5 + Math.random() * 1;
+                this.alpha = 0.3 + Math.random() * 0.7;
+                this.angle = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+                this.rotation = 0;
+            }
+            
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.font = `${this.size}px 'Courier New', monospace`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.text, 0, 0);
+                ctx.restore();
+            }
+            
+            update() {
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+                this.rotation += this.rotationSpeed;
+                
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.angle = Math.random() * Math.PI * 2;
+                }
+            }
+        }
 
         // Obstáculos (virus)
         class Obstacle {
@@ -230,6 +291,21 @@
             }
         }
 
+        // Crear textos decorativos
+        function createDecoratives() {
+            for (let i = 0; i < 10; i++) {
+                decoratives.push(new DecorativeText());
+            }
+        }
+
+        // Dibujar plataformas
+        function drawPlatforms() {
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.2)';
+            platforms.forEach(platform => {
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+            });
+        }
+
         // Dibujar fondo cyberpunk
         function drawBackground() {
             const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
@@ -263,6 +339,12 @@
                 }
             });
             
+            // Dibujar textos decorativos
+            decoratives.forEach(text => {
+                text.update();
+                text.draw();
+            });
+            
             ctx.strokeStyle = '#0ff';
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -292,16 +374,19 @@
             speed = 4;
             gameSpeed = 4;
             obstacles = [];
+            currentPlatformIndex = 0;
             player.x = canvas.width / 2;
-            player.y = canvas.height - 200;
+            player.y = platforms[currentPlatformIndex].y;
             player.jumping = false;
             player.speedX = 0;
             player.speedY = 0;
             
             neonLines = [];
             backgroundGrid = [];
+            decoratives = [];
             createNeonLines();
             createBackgroundGrid();
+            createDecoratives();
             
             gameLoop();
         }
@@ -318,6 +403,7 @@
         function gameLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawBackground();
+            drawPlatforms();
             player.update();
             player.draw();
             
@@ -402,6 +488,9 @@
                 case 'ArrowUp':
                     player.jump();
                     break;
+                case 'ArrowDown':
+                    player.moveDown();
+                    break;
             }
         });
 
@@ -414,11 +503,19 @@
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            platforms = [
+                { x: 0, y: canvas.height - 200, width: canvas.width, height: 20 },
+                { x: 0, y: canvas.height - 100, width: canvas.width, height: 20 }
+            ];
+            if (player) {
+                player.y = platforms[currentPlatformIndex].y;
+            }
         });
 
         // Inicializar
         createNeonLines();
         createBackgroundGrid();
+        createDecoratives();
     </script>
 </body>
 </html>
