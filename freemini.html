@@ -115,8 +115,8 @@
         // Variables del juego
         let gameRunning = false;
         let score = 0;
-        let speed = 4;  // Aumentada de 3 a 4
-        let gameSpeed = 4;  // Aumentada de 3 a 4
+        let speed = 4;
+        let gameSpeed = 4;
         let obstacles = [];
         let lastObstacleTime = 0;
         let animationId;
@@ -130,12 +130,12 @@
         let virusImage = new Image();
         virusImage.src = 'https://ecwatforcanvas.github.io/Images/viruz.png';
 
-        // Personaje (más grande)
+        // Personaje
         const player = {
             x: canvas.width / 2,
-            y: canvas.height - 200,  // Ajustada posición por el nuevo tamaño
-            width: 100,  // Aumentado de 70 a 100
-            height: 140, // Aumentado de 100 a 140
+            y: canvas.height - 200,
+            width: 100,
+            height: 140,
             speedX: 0,
             speedY: 0,
             jumping: false,
@@ -154,7 +154,7 @@
                     this.y += this.speedY;
                     this.speedY += 0.5;
                     
-                    if (this.y > canvas.height - 200) {  // Ajustado a nueva posición
+                    if (this.y > canvas.height - 200) {
                         this.y = canvas.height - 200;
                         this.jumping = false;
                     }
@@ -171,15 +171,15 @@
             }
         };
 
-        // Obstáculos (virus más grandes y rápidos)
+        // Obstáculos (virus)
         class Obstacle {
             constructor() {
-                this.width = 80;  // Aumentado de 60 a 80
-                this.height = 80; // Aumentado de 60 a 80
+                this.width = 80;
+                this.height = 80;
                 this.x = Math.random() * (canvas.width - this.width);
-                this.y = canvas.height - 450; // Aparecen más arriba
+                this.y = -100; // Aparecen MUCHO más arriba (fuera de pantalla)
                 this.rotation = 0;
-                this.rotationSpeed = Math.random() * 5 - 2.5; // Giran más rápido
+                this.rotationSpeed = Math.random() * 5 - 2.5;
             }
             
             draw() {
@@ -198,12 +198,11 @@
             }
             
             update() {
-                this.y += gameSpeed * 1.2;  // Aumentada velocidad (de 0.8 a 1.2)
+                this.y += gameSpeed * 1.2;
                 this.rotation += this.rotationSpeed;
             }
         }
 
-        // [Resto del código permanece igual...]
         // Crear líneas de neón
         function createNeonLines() {
             for (let i = 0; i < 20; i++) {
@@ -290,11 +289,11 @@
             winScreen.style.display = 'none';
             score = 0;
             scoreElement.textContent = score;
-            speed = 4;  // Velocidad inicial aumentada
-            gameSpeed = 4;  // Velocidad del juego aumentada
+            speed = 4;
+            gameSpeed = 4;
             obstacles = [];
             player.x = canvas.width / 2;
-            player.y = canvas.height - 200; // Posición inicial ajustada
+            player.y = canvas.height - 200;
             player.jumping = false;
             player.speedX = 0;
             player.speedY = 0;
@@ -323,7 +322,7 @@
             player.draw();
             
             const now = Date.now();
-            if (now - lastObstacleTime > 1800 - score * 2 && gameRunning) { // Intervalo ligeramente reducido
+            if (now - lastObstacleTime > 2000 - score * 2 && gameRunning) {
                 obstacles.push(new Obstacle());
                 lastObstacleTime = now;
             }
@@ -347,14 +346,13 @@
                     score++;
                     scoreElement.textContent = score;
                     
-                    // Comprobar si alcanzó la puntuación ganadora
                     if (score >= 15) {
                         showWinScreen();
                         return;
                     }
                     
                     if (score % 10 === 0) {
-                        gameSpeed += 0.4; // Aumento de velocidad ligeramente mayor
+                        gameSpeed += 0.4;
                     }
                 }
             }
@@ -396,10 +394,10 @@
             
             switch (e.key) {
                 case 'ArrowLeft':
-                    player.speedX = -10; // Movimiento más rápido
+                    player.speedX = -10;
                     break;
                 case 'ArrowRight':
-                    player.speedX = 10;  // Movimiento más rápido
+                    player.speedX = 10;
                     break;
                 case 'ArrowUp':
                     player.jump();
