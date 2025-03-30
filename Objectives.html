@@ -10,8 +10,8 @@
         body {
             background-color: #000;
             margin: 0;
-            padding: 0;
-            overflow: hidden;
+            padding: 20px 0;
+            overflow-x: hidden;
             font-family: 'Share Tech Mono', monospace;
             color: #0ff;
             text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
@@ -24,18 +24,19 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0.2;
+            opacity: 0.15;
         }
         
         .container {
             max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 20px auto;
+            padding: 30px;
             border: 1px solid #0ff;
             box-shadow: 0 0 15px #0ff, 0 0 30px #0ff;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.85);
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
+            max-height: 90vh;
         }
         
         .container::before {
@@ -60,6 +61,7 @@
             font-size: 2.2em;
             text-transform: uppercase;
             letter-spacing: 3px;
+            margin-top: 0;
         }
         
         h2 {
@@ -79,6 +81,7 @@
         ul {
             list-style-type: none;
             padding-left: 0;
+            margin-bottom: 30px;
         }
         
         li {
@@ -181,6 +184,39 @@
             border-bottom-width: 3px;
             border-right-width: 3px;
         }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #0ff;
+            box-shadow: 0 0 5px #0ff;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f0f;
+            box-shadow: 0 0 5px #f0f;
+        }
+        
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-top: 1px solid #0ff;
+            box-shadow: 0 0 10px #0ff;
+            font-size: 0.8em;
+            display: flex;
+            justify-content: space-between;
+        }
     </style>
 </head>
 <body>
@@ -194,15 +230,15 @@
         
         <div class="scanline"></div>
         
-        <h1 class="glitch">>_AI-ENGLISH//COURSE_OBJECTIVES<span class="terminal-cursor">_</span></h1>
+        <h1 class="glitch">>_ENGLISH COURSE WITH AI TOOLS_OBJECTIVES<span class="terminal-cursor">_</span></h1>
         
         <h2>> GENERAL_OBJECTIVE</h2>
         <p>TO DEVELOP A BASIC ENGLISH II COURSE WITH AI TOOLS ON THE CANVAS PLATFORM, ENHANCING LANGUAGE ACQUISITION THROUGH INTERACTIVE, AI SUPPORTED TOOLS.</p>
         
         <h2>> SPECIFIC_OBJECTIVES</h2>
-        <p>TO CREATE AN INSTRUCTIONAL DESIGN THAT PROVIDES ENGAGING AND INTERACTIVE ACTIVITIES TO SUPPORT STUDENTS' LEARNING.</p>
         
         <ul>
+            <li>TO CREATE AN INSTRUCTIONAL DESIGN THAT PROVIDES ENGAGING AND INTERACTIVE ACTIVITIES TO SUPPORT STUDENTS' LEARNING.</li>
             <li>TO DESIGN INTERACTIVE ACTIVITIES USING CHATGPT, DEEPSEEK, GEMINI, AND COPILOT, ENHANCING STUDENT ENGAGEMENT AND PROVIDING DYNAMIC LANGUAGE PRACTICE.</li>
             <li>TO CREATE GRAMMAR INFOGRAPHICS WITH CANVA DESIGN EDITOR, FACILITATING VISUAL LEARNING AND REINFORCING KEY LANGUAGE CONCEPTS.</li>
             <li>TO PRODUCE INSTRUCTIONAL VIDEOS USING CAPCUT, IMPROVING COMPREHENSION THROUGH MULTIMEDIA RESOURCES.</li>
@@ -217,6 +253,12 @@
         </ul>
         
         <p>> SYSTEM_READY<span class="terminal-cursor">_</span></p>
+    </div>
+
+    <div class="status-bar">
+        <span>> SYSTEM_STATUS: <span style="color: #0f0;">ONLINE</span></span>
+        <span>> SCROLL: <span style="color: #ff0;">ENABLED</span></span>
+        <span>> MEMORY: <span style="color: #f0f;">64.2MB/128MB</span></span>
     </div>
 
     <script>
@@ -240,7 +282,7 @@
         const rainDrops = [];
         
         for (let x = 0; x < columns; x++) {
-            rainDrops[x] = 1;
+            rainDrops[x] = Math.random() * canvas.height;
         }
         
         const draw = () => {
@@ -271,15 +313,22 @@
         // Add glitch effect to random letters occasionally
         setInterval(() => {
             const letters = document.querySelectorAll('li, p, h1, h2');
-            letters.forEach(letter => {
-                if (Math.random() > 0.95) {
-                    letter.classList.add('glitch');
-                    setTimeout(() => {
-                        letter.classList.remove('glitch');
-                    }, 200);
-                }
-            });
-        }, 100);
+            const randomIndex = Math.floor(Math.random() * letters.length);
+            letters[randomIndex].classList.add('glitch');
+            
+            setTimeout(() => {
+                letters[randomIndex].classList.remove('glitch');
+            }, 200);
+        }, 1000);
+        
+        // Update memory usage in status bar
+        setInterval(() => {
+            const memoryElement = document.querySelector('.status-bar span:last-child span');
+            const currentMem = parseFloat(memoryElement.textContent);
+            const newMem = (currentMem + (Math.random() * 2 - 1)).toFixed(1);
+            const clampedMem = Math.min(128, Math.max(64, newMem));
+            memoryElement.textContent = `${clampedMem}MB/128MB`;
+        }, 3000);
     </script>
 </body>
 </html>
