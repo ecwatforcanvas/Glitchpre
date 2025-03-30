@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Project Proposal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        
+        :root {
+            --neon-blue: #0ff;
+            --neon-pink: #f0f;
+            --neon-green: #0f0;
+            --neon-yellow: #ff0;
+            --neon-purple: #90f;
+        }
+        
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--neon-blue);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        
+        header {
+            border-bottom: 1px solid var(--neon-blue);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+        
+        h1, h2, h3 {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        h1 {
+            color: var(--neon-pink);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px var(--neon-pink);
+        }
+        
+        h2 {
+            color: var(--neon-green);
+            font-size: 1.8em;
+            margin: 40px 0 20px;
+            border-left: 3px solid var(--neon-green);
+            padding-left: 15px;
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+        
+        h3 {
+            color: var(--neon-yellow);
+            margin: 25px 0 15px;
+        }
+        
+        h4 {
+            color: var(--neon-purple);
+            margin: 20px 0 10px;
+        }
+        
+        p, ul {
+            margin-bottom: 20px;
+        }
+        
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        li:before {
+            content: "▹";
+            color: var(--neon-yellow);
+            position: absolute;
+            left: -20px;
+        }
+        
+        .glow {
+            text-shadow: 0 0 5px currentColor;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .card {
+            border: 1px solid var(--neon-blue);
+            padding: 20px;
+            border-radius: 3px;
+            box-shadow: 0 0 10px var(--neon-blue);
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .card h3 {
+            margin-top: 0;
+            border-bottom: 1px dashed var(--neon-yellow);
+            padding-bottom: 10px;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 30px 0;
+        }
+        
+        .timeline:before {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--neon-blue);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--neon-pink);
+            box-shadow: 0 0 5px var(--neon-pink);
+        }
+        
+        .corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid var(--neon-blue);
+        }
+        
+        .top-left {
+            top: 0;
+            left: 0;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .top-right {
+            top: 0;
+            right: 0;
+            border-left: none;
+            border-bottom: none;
+        }
+        
+        .bottom-left {
+            bottom: 0;
+            left: 0;
+            border-right: none;
+            border-top: none;
+        }
+        
+        .bottom-right {
+            bottom: 0;
+            right: 0;
+            border-left: none;
+            border-top: none;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+        }
+        
+        th, td {
+            border: 1px solid var(--neon-blue);
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: rgba(0, 255, 255, 0.1);
+            color: var(--neon-yellow);
+        }
+        
+        tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                opacity: 1;
+            }
+            20%, 22%, 24%, 55% {
+                opacity: 0.5;
+            }
+        }
+        
+        .flicker {
+            animation: flicker 3s infinite;
+        }
+        
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="corner top-left"></div>
+        <div class="corner top-right"></div>
+        
+        <header>
+            <h1 class="glow flicker">Tech Project Proposal</h1>
+            <p class="glow">Advanced Educational Technology Solution</p>
+        </header>
+        
+        <section id="introduccion">
+            <h2 class="glow">Introducción</h2>
+            <p>En la era digital actual, la integración de tecnologías avanzadas en la educación se ha convertido en una necesidad crítica. Este proyecto propone el desarrollo de un curso de inglés básico II utilizando herramientas de IA en la plataforma Canvas, diseñado para revolucionar la adquisición del lenguaje mediante métodos interactivos y apoyados por inteligencia artificial.</p>
+        </section>
+        
+        <section id="problem">
+            <h2 class="glow">Problem to be Solved</h2>
+            <p>Los desafíos actuales en la enseñanza de idiomas incluyen:</p>
+            <ul>
+                <li>Falta de personalización en el aprendizaje</li>
+                <li>Recursos educativos estáticos y no interactivos</li>
+                <li>Dificultad para mantener la motivación del estudiante</li>
+                <li>Limitaciones en la práctica conversacional</li>
+                <li>Evaluaciones poco adaptativas</li>
+            </ul>
+        </section>
+        
+        <!-- NEW SECTION: Methodological Design -->
+        <section id="methodological">
+            <h2 class="glow">Methodological Design</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Fase 1: Análisis de necesidades</h4>
+                    <p>Identificación de requerimientos técnicos y pedagógicos mediante encuestas y focus groups</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Fase 2: Diseño instruccional</h4>
+                    <p>Creación de la estructura del curso y mapeo de competencias</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Fase 3: Desarrollo de contenidos</h4>
+                    <p>Producción de materiales interactivos y recursos multimedia</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Fase 4: Implementación piloto</h4>
+                    <p>Pruebas controladas con grupos de estudiantes</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Fase 5: Evaluación y ajustes</h4>
+                    <p>Análisis de resultados y optimización del curso</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- NEW SECTION: Theoretical and Technological Bases -->
+        <section id="bases">
+            <h2 class="glow">Theoretical and Technological Bases</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Fundamentos Teóricos</h3>
+                    <ul>
+                        <li>Constructivismo social (Vygotsky)</li>
+                        <li>Aprendizaje significativo (Ausubel)</li>
+                        <li>Andragogía (Knowles)</li>
+                        <li>Gamificación educativa</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Bases Tecnológicas</h3>
+                    <ul>
+                        <li>Inteligencia Artificial aplicada a educación</li>
+                        <li>Learning Management Systems (Canvas)</li>
+                        <li>Herramientas de generación de contenido (Canva, CapCut)</li>
+                        <li>Plataformas de IA conversacional (ChatGPT, Gemini)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="prototype">
+            <h2 class="glow">Prototype Modality</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Plataforma Base</h3>
+                    <p>Canvas LMS como núcleo del sistema, aprovechando su infraestructura robusta y capacidad de integración.</p>
+                </div>
+                <div class="card">
+                    <h3>Componentes de IA</h3>
+                    <p>Integración de ChatGPT, DeepSeek, Gemini y Copilot para actividades interactivas y práctica conversacional.</p>
+                </div>
+                <div class="card">
+                    <h3>Recursos Multimedia</h3>
+                    <p>Videos instructivos editados con CapCut e infografías creadas con Canva para aprendizaje visual.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- NEW SECTION: Human Resources -->
+        <section id="resources">
+            <h2 class="glow">Human Resources and Materials</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Recurso</th>
+                        <th>Descripción</th>
+                        <th>Responsabilidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Diseñador Instruccional</td>
+                        <td>Experto en pedagogía y diseño curricular</td>
+                        <td>Estructuración del curso</td>
+                    </tr>
+                    <tr>
+                        <td>Desarrollador de Contenidos</td>
+                        <td>Especialista en creación de materiales digitales</td>
+                        <td>Producción de recursos</td>
+                    </tr>
+                    <tr>
+                        <td>Experto en IA</td>
+                        <td>Conocimiento en integración de herramientas de inteligencia artificial</td>
+                        <td>Configuración de sistemas interactivos</td>
+                    </tr>
+                    <tr>
+                        <td>Recursos Tecnológicos</td>
+                        <td>Licencias de software, servidores, equipos</td>
+                        <td>Soporte técnico</td>
+                    </tr>
+                    <tr>
+                        <td>Materiales Didácticos</td>
+                        <td>Guías, infografías, videos, presentaciones</td>
+                        <td>Implementación educativa</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <section id="objectives">
+            <h2 class="glow">Objectives</h2>
+            <ul>
+                <li>Desarrollar un curso interactivo de inglés básico II con herramientas de IA</li>
+                <li>Crear un diseño instruccional centrado en la experiencia del estudiante</li>
+                <li>Implementar evaluaciones adaptativas basadas en el desempeño</li>
+                <li>Proveer retroalimentación inmediata mediante sistemas inteligentes</li>
+                <li>Gamificar el proceso de aprendizaje para aumentar la retención</li>
+            </ul>
+        </section>
+        
+        <section id="scope">
+            <h2 class="glow">Scope</h2>
+            <p>El proyecto cubrirá:</p>
+            <ul>
+                <li>Diseño completo del curso para 12 semanas de instrucción</li>
+                <li>Desarrollo de 5 módulos temáticos con sus respectivas evaluaciones</li>
+                <li>Integración de al menos 4 herramientas de IA diferentes</li>
+                <li>Creación de 15+ recursos multimedia originales</li>
+                <li>Implementación de un sistema de seguimiento del progreso</li>
+            </ul>
+        </section>
+        
+        <section id="justification">
+            <h2 class="glow">Justification</h2>
+            <p>Este proyecto se justifica por:</p>
+            <ul>
+                <li>La creciente demanda de educación de idiomas personalizada</li>
+                <li>La necesidad de modernizar los métodos de enseñanza tradicionales</li>
+                <li>El potencial demostrado de la IA en la adquisición de lenguajes</li>
+                <li>La escalabilidad de la solución propuesta</li>
+                <li>La posibilidad de replicar el modelo en otras áreas educativas</li>
+            </ul>
+        </section>
+        
+        <div class="corner bottom-left"></div>
+        <div class="corner bottom-right"></div>
+        
+        <footer>
+            <p class="glow">TECH EDUCATION INITIATIVE | 2024 | NEXT-GEN LEARNING SOLUTIONS</p>
+        </footer>
+    </div>
+</body>
+</html>
