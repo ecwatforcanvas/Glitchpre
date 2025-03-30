@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-ENGLISH//COURSE_OBJECTIVES</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Share Tech Mono', monospace;
+            color: #0ff;
+            text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+        }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #0ff;
+            box-shadow: 0 0 15px #0ff, 0 0 30px #0ff;
+            background-color: rgba(0, 0, 0, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid #f0f;
+            box-shadow: 0 0 10px #f0f, 0 0 20px #f0f;
+            z-index: -1;
+            opacity: 0.5;
+            animation: pulse 3s infinite alternate;
+        }
+        
+        h1 {
+            color: #f0f;
+            text-shadow: 0 0 5px #f0f, 0 0 10px #f0f;
+            border-bottom: 1px solid #0ff;
+            padding-bottom: 10px;
+            font-size: 2.2em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        h2 {
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+            margin-top: 30px;
+            font-size: 1.8em;
+            letter-spacing: 2px;
+        }
+        
+        p {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        li {
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 30px;
+            font-size: 1em;
+        }
+        
+        li::before {
+            content: ">>";
+            position: absolute;
+            left: 0;
+            color: #ff0;
+            text-shadow: 0 0 5px #ff0;
+        }
+        
+        .glitch {
+            animation: glitch 1s linear infinite;
+        }
+        
+        @keyframes glitch {
+            0% { text-shadow: 0 0 5px #0ff; }
+            25% { text-shadow: 2px 0 5px #f0f, -2px 0 5px #0f0; }
+            50% { text-shadow: -3px 0 5px #0f0, 3px 0 5px #f0f; }
+            75% { text-shadow: 2px 0 5px #ff0, -2px 0 5px #0ff; }
+            100% { text-shadow: 0 0 5px #0ff; }
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+        
+        .terminal-cursor {
+            animation: blink 1s step-end infinite;
+        }
+        
+        @keyframes blink {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 255, 255, 0) 0%,
+                rgba(0, 255, 255, 0.1) 10%,
+                rgba(0, 255, 255, 0) 100%
+            );
+            animation: scan 8s linear infinite;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        
+        .corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-style: solid;
+            border-color: #0ff;
+            border-width: 0;
+            box-shadow: 0 0 10px #0ff;
+        }
+        
+        .top-left {
+            top: 0;
+            left: 0;
+            border-top-width: 3px;
+            border-left-width: 3px;
+        }
+        
+        .top-right {
+            top: 0;
+            right: 0;
+            border-top-width: 3px;
+            border-right-width: 3px;
+        }
+        
+        .bottom-left {
+            bottom: 0;
+            left: 0;
+            border-bottom-width: 3px;
+            border-left-width: 3px;
+        }
+        
+        .bottom-right {
+            bottom: 0;
+            right: 0;
+            border-bottom-width: 3px;
+            border-right-width: 3px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix" class="matrix-bg"></canvas>
+    
+    <div class="container">
+        <div class="corner top-left"></div>
+        <div class="corner top-right"></div>
+        <div class="corner bottom-left"></div>
+        <div class="corner bottom-right"></div>
+        
+        <div class="scanline"></div>
+        
+        <h1 class="glitch">>_AI-ENGLISH//COURSE_OBJECTIVES<span class="terminal-cursor">_</span></h1>
+        
+        <h2>> GENERAL_OBJECTIVE</h2>
+        <p>TO DEVELOP A BASIC ENGLISH II COURSE WITH AI TOOLS ON THE CANVAS PLATFORM, ENHANCING LANGUAGE ACQUISITION THROUGH INTERACTIVE, AI SUPPORTED TOOLS.</p>
+        
+        <h2>> SPECIFIC_OBJECTIVES</h2>
+        <p>TO CREATE AN INSTRUCTIONAL DESIGN THAT PROVIDES ENGAGING AND INTERACTIVE ACTIVITIES TO SUPPORT STUDENTS' LEARNING.</p>
+        
+        <ul>
+            <li>TO DESIGN INTERACTIVE ACTIVITIES USING CHATGPT, DEEPSEEK, GEMINI, AND COPILOT, ENHANCING STUDENT ENGAGEMENT AND PROVIDING DYNAMIC LANGUAGE PRACTICE.</li>
+            <li>TO CREATE GRAMMAR INFOGRAPHICS WITH CANVA DESIGN EDITOR, FACILITATING VISUAL LEARNING AND REINFORCING KEY LANGUAGE CONCEPTS.</li>
+            <li>TO PRODUCE INSTRUCTIONAL VIDEOS USING CAPCUT, IMPROVING COMPREHENSION THROUGH MULTIMEDIA RESOURCES.</li>
+            <li>TO DEVELOP INTERACTIVE PRESENTATIONS ON CANVA, SUPPORTING STRUCTURED AND VISUALLY APPEALING LESSON DELIVERY.</li>
+            <li>TO DESIGN H5P-BASED ACTIVITIES USING LUMI, ENABLING INTERACTIVE EXERCISES FOR ENHANCED STUDENT PARTICIPATION.</li>
+            <li>TO GENERATE KEY VOCABULARY PDFS, AIDING IN VOCABULARY RETENTION AND QUICK REFERENCE FOR STUDENTS.</li>
+            <li>TO CRAFT GUIDED INSTRUCTIONS FOR VOICEMAKER, HELPING STUDENTS IMPROVE PRONUNCIATION AND LISTENING SKILLS THROUGH TEXT-TO-SPEECH TECHNOLOGY.</li>
+            <li>TO PROVIDE STEP-BY-STEP GUIDES FOR LEONARDO.AI, ALLOWING STUDENTS TO CREATE AI-GENERATED VISUALS FOR CREATIVE LANGUAGE PRACTICE.</li>
+            <li>TO DEVELOP AN HTML VIDEO GAME AS A FINAL PROJECT, REINFORCING COURSE CONTENT THROUGH GAMIFIED LEARNING.</li>
+            <li>TO STRUCTURE A LEARNING PATH ON CANVAS, ORGANIZING CONTENT FOR A SEAMLESS AND PROGRESSIVE LEARNING EXPERIENCE.</li>
+            <li>TO IMPLEMENT CONTROL QUIZZES FOR EACH MODULE, ENSURING COMPREHENSION AND RETENTION OF KEY CONCEPTS.</li>
+        </ul>
+        
+        <p>> SYSTEM_READY<span class="terminal-cursor">_</span></p>
+    </div>
+
+    <script>
+        // Matrix background effect
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+        const symbols = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+        
+        const alphabet = katakana + latin + nums + symbols;
+        
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        
+        const rainDrops = [];
+        
+        for (let x = 0; x < columns; x++) {
+            rainDrops[x] = 1;
+        }
+        
+        const draw = () => {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+                
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        };
+        
+        setInterval(draw, 30);
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // Add glitch effect to random letters occasionally
+        setInterval(() => {
+            const letters = document.querySelectorAll('li, p, h1, h2');
+            letters.forEach(letter => {
+                if (Math.random() > 0.95) {
+                    letter.classList.add('glitch');
+                    setTimeout(() => {
+                        letter.classList.remove('glitch');
+                    }, 200);
+                }
+            });
+        }, 100);
+    </script>
+</body>
+</html>
