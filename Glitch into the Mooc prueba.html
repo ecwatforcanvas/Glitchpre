@@ -35,6 +35,14 @@
             text-transform: uppercase;
         }
 
+        h2 {
+            font-size: 2.5em;
+            color: #00ffaa;
+            text-shadow: 0 0 10px rgba(0, 255, 170, 0.7);
+            margin: 20px 0;
+            letter-spacing: 2px;
+        }
+
         .screen {
             display: none; /* Todas las pantallas ocultas por defecto */
             max-width: 1000px;
@@ -278,7 +286,7 @@
             text-shadow: 0 0 8px #ff5555, 0 0 16px #ff5555;
             box-shadow: 0 0 15px #ff5555, 0 0 30px #ff5555, inset 0 0 15px #ff5555;
             min-width: 250px;
-            animation: pulse 2s infinite;
+            animation: pulse 1s infinite;
         }
 
         .primary-btn:hover {
@@ -484,7 +492,7 @@
 
         /* Estilos específicos para la pantalla 6 */
         #screen6 {
-            background: #000;
+            background:#000;
         }
 
         #screen6 .flashcards-container {
@@ -519,8 +527,198 @@
         #screen6 .flashcard-back{
             white-space: normal;
         }
-    const style = document.createElement('style');
-    style.textContent = `
+
+        /* Estilos para la pantalla 7 (password) */
+        #screen7 input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            background: #111;
+            color: #0ff;
+            border: 2px solid #0ff;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        #screen7 input[type="password"]:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 255, 234, 0.9);
+        }
+
+        #passwordError {
+            color: #ff5555;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* Estilos para pantalla 10 (grammar challenge) */
+        .grammar-question {
+            background: rgba(0, 20, 30, 0.7);
+            border: 1px solid #00ffaa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            text-align: left;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .option-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00aaff;
+            color: #00aaff;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+        }
+
+        .option-btn:hover {
+            background: rgba(0, 100, 150, 0.5);
+            transform: scale(1.02);
+        }
+
+        .correct {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .incorrect {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #111;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffaa, #00aaff);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        /* Estilos para pantalla 11 (success) */
+        .success-animation {
+            font-size: 5em;
+            color: #00ffaa;
+            text-shadow: 0 0 20px #00ffaa;
+            animation: pulse 1s infinite;
+            margin: 30px 0;
+        }
+
+        /* Estilos para pantalla 12 (final challenge) */
+        .final-challenge {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #ff00ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 800px;
+        }
+
+        .code-editor {
+            background: #111;
+            border: 1px solid #00ffea;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'VT323', monospace;
+            font-size: 1.2em;
+            color: #00ffaa;
+            text-align: left;
+            margin: 20px 0;
+            min-height: 200px;
+        }
+
+        .code-line {
+            margin-bottom: 10px;
+        }
+
+        .code-comment {
+            color: #777;
+        }
+
+        /* Estilos para pantalla 13 (final boss) */
+        .boss-container {
+            position: relative;
+            height: 400px;
+            margin: 30px auto;
+        }
+
+        .boss-image {
+            max-width: 100%;
+            max-height: 100%;
+            filter: hue-rotate(90deg) brightness(1.2);
+            animation: bossGlitch 2s infinite;
+        }
+
+        @keyframes bossGlitch {
+            0% { filter: hue-rotate(90deg) brightness(1.2); }
+            20% { filter: hue-rotate(180deg) brightness(1.1); }
+            40% { filter: hue-rotate(270deg) brightness(1.3); }
+            60% { filter: hue-rotate(0deg) brightness(1.2); }
+            80% { filter: hue-rotate(45deg) brightness(1.4); }
+            100% { filter: hue-rotate(90deg) brightness(1.2); }
+        }
+
+        /* Estilos para pantalla 14 (victory) */
+        .victory-container {
+            position: relative;
+            height: 500px;
+        }
+
+        .victory-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3em;
+            color: #00ffea;
+            text-shadow: 0 0 20px #00ffea;
+            animation: victoryGlow 2s infinite;
+        }
+
+        @keyframes victoryGlow {
+            0%, 100% { text-shadow: 0 0 20px #00ffea, 0 0 40px #00ffea; }
+            50% { text-shadow: 0 0 30px #00ffea, 0 0 60px #00ffea, 0 0 80px #00ffea; }
+        }
+
+        /* Estilos para pantalla 15 (credits) */
+        .credits-container {
+            text-align: center;
+            margin: 30px auto;
+            max-width: 800px;
+        }
+
+        .credit-item {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            animation: fadeIn 1s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Animación de shake para inputs */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             20% { transform: translateX(-10px); }
@@ -528,36 +726,244 @@
             60% { transform: translateX(-10px); }
             80% { transform: translateX(10px); }
         }
-        
-        #passwordInput:focus {
-            outline: none;
-            box-shadow: 0 0 20px rgba(0, 255, 234, 0.9);
-        }
-    `;
-    document.head.appendChild(style);
-
-    // Para permitir enviar con Enter
-    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            checkPassword();
-        }
-    });
     </style>
+    <script>
+        let currentScreen = 'screen1';
+        let passwordCorrect = false;
+        let grammarScore = 0;
+        let currentQuestionIndex = 0;
+        let countdownInterval;
+        let totalQuestions = 0;
+        let correctAnswers = 0;
+
+
+        function changeScreen(screenId) {
+            document.getElementById(currentScreen).classList.remove('active');
+            document.getElementById(screenId).classList.add('active');
+            currentScreen = screenId;
+            if (screenId === 'screen5') {
+                startCountdown();
+            }
+            if (screenId === 'screen10'){
+                loadGrammarQuestion();
+            }
+        }
+
+        function showTranslation() {
+            document.getElementById("translation").style.display = "block";
+        }
+
+        function hideTranslation() {
+            document.getElementById("translation").style.display = "none";
+        }
+
+        function startCountdown() {
+            let timeLeft = 10;
+            document.getElementById('countdown').textContent = timeLeft;
+
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('countdown').textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    changeScreen('screen6'); // Go to Game Over screen
+                }
+            }, 1000);
+        }
+
+        function checkPassword() {
+            const passwordInput = document.getElementById("passwordInput");
+            const password = passwordInput.value;
+            const passwordError = document.getElementById("passwordError");
+
+            if (password === "AI tools") { // Correct password is "AI tools"
+                passwordCorrect = true;
+                clearInterval(countdownInterval); // Stop countdown if active
+                changeScreen('screen8'); // Go to the next screen
+            } else {
+                passwordError.style.display = "block";
+                passwordInput.classList.add('shake');
+                setTimeout(() => {
+                    passwordInput.classList.remove('shake');
+                }, 500);
+                passwordInput.value = "";
+            }
+        }
+
+        const grammarQuestions = [
+            {
+                question: "Past Tense: Regular Verbs - Complete the sentence: 'Yesterday, I ________ (walk) to the park.'",
+                options: ["walked", "walk", "walking", "walks"],
+                correctAnswer: "walked",
+                type: "pastTenseRegular"
+            },
+            {
+                question: "Past Tense: Irregular Verbs - Complete the sentence: 'Last night, she ________ (go) to the cinema.'",
+                options: ["went", "gone", "go", "going"],
+                correctAnswer: "went",
+                type: "pastTenseIrregular"
+            },
+            {
+                question: "Object Pronouns - Choose the correct pronoun: 'The teacher gave the books to ________.'",
+                options: ["I", "me", "my", "mine"],
+                correctAnswer: "me",
+                type: "objectPronouns"
+            },
+            {
+                question: "Comparative Adjectives - Complete the sentence: 'This car is ________ (fast) than that one.'",
+                options: ["faster", "fast", "fastest", "more fast"],
+                correctAnswer: "faster",
+                type: "comparativeAdjectives"
+            },
+            {
+                question: "Could and Should - Choose the correct word: 'You ________ study harder for the exam.'",
+                options: ["could", "should", "can", "would"],
+                correctAnswer: "should",
+                type: "couldShould"
+            },
+            {
+                question: "Be Going To - Complete the sentence: 'They ________ (be) going to visit Paris next month.'",
+                options: ["is", "are", "am", "be"],
+                correctAnswer: "are",
+                type: "beGoingTo"
+            },
+             {
+                question: "Past Tense: Regular Verbs - The dog ________ (bark) loudly.",
+                options: ["barked", "bark", "barking", "barks"],
+                correctAnswer: "barked",
+                type: "pastTenseRegular"
+            },
+            {
+                question: "Past Tense: Irregular Verbs - She ________ (take) beautiful photos.",
+                options: ["took", "taken", "take", "taking"],
+                correctAnswer: "took",
+                type: "pastTenseIrregular"
+            },
+            {
+                question: "Object Pronouns - He gave ________ the keys.",
+                options: ["I", "me", "my", "mine"],
+                correctAnswer: "me",
+                type: "objectPronouns"
+            },
+            {
+                question: "Comparative Adjectives - My house is ________ (big) than yours.",
+                options: ["bigger", "big", "biggest", "more big"],
+                correctAnswer: "bigger",
+                type: "comparativeAdjectives"
+            },
+            {
+                question: "Could and Should - We ________ go to the party last night.",
+                options: ["could", "should", "can", "would"],
+                correctAnswer: "could",
+                type: "couldShould"
+            },
+             {
+                question: "Be Going To - I ________ (be) going to learn to play guitar.",
+                options: ["is", "am", "are", "be"],
+                correctAnswer: "am",
+                type: "beGoingTo"
+            },
+        ];
+
+        function loadGrammarQuestion() {
+            totalQuestions = grammarQuestions.length;
+            const questionData = grammarQuestions[currentQuestionIndex];
+            const questionElement = document.getElementById("grammarQuestion");
+            const optionsContainer = document.getElementById("optionsContainer");
+            questionElement.textContent = questionData.question;
+            optionsContainer.innerHTML = '';
+
+            questionData.options.forEach(option => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.className = "option-btn";
+                button.onclick = () => checkAnswer(option, questionData.correctAnswer);
+                optionsContainer.appendChild(button);
+            });
+
+            updateProgressBar();
+        }
+
+        function checkAnswer(selectedOption, correctAnswer) {
+            const selectedButton = Array.from(document.getElementById("optionsContainer").children).find(btn => btn.textContent === selectedOption);
+
+            if (selectedOption === correctAnswer) {
+                correctAnswers++;
+                selectedButton.classList.add("correct");
+            } else {
+                selectedButton.classList.add("incorrect");
+            }
+
+            // Deshabilitar todos los botones después de seleccionar una respuesta
+            const allButtons = document.querySelectorAll('.option-btn');
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+            });
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < grammarQuestions.length) {
+                    loadGrammarQuestion();
+                } else {
+                    showResults();
+                }
+            }, 1000);
+        }
+
+        function showResults() {
+            const screen11 = document.getElementById('screen11');
+            screen11.innerHTML = `
+                <div class="matrix-code"></div>
+                <div class="success-animation">${correctAnswers === totalQuestions ? '✔' : '✖'}</div>
+                <h2>${correctAnswers === totalQuestions ? 'Congratulations!' : 'Try Again!'}</h2>
+                <p>You scored ${correctAnswers} out of ${totalQuestions}</p>
+                <div class="action-buttons">
+                    ${correctAnswers === totalQuestions 
+                        ? '<button class="primary-btn" onclick="changeScreen(\'screen12\')">Continue</button>' 
+                        : '<button class="primary-btn" onclick="resetGrammarChallenge()">Try Again</button>'}
+                </div>
+            `;
+            changeScreen('screen11');
+        }
+
+        function resetGrammarChallenge() {
+            currentQuestionIndex = 0;
+            correctAnswers = 0;
+            changeScreen('screen10');
+            loadGrammarQuestion();
+        }
+
+        function updateProgressBar() {
+            const progress = document.getElementById("progress");
+            const currentProgress = (currentQuestionIndex / grammarQuestions.length) * 100;
+            progress.style.width = `${currentProgress}%`;
+        }
+
+        function resetGame() {
+            grammarScore = 0;
+            currentQuestionIndex = 0;
+            loadGrammarQuestion();
+            changeScreen('screen10');
+        }
+
+    </script>
 </head>
 <body>
 
     <div id="screen1" class="screen active">
         <div class="matrix-code"></div>
         <h1>G.I.M.</h1>
-    <div style="text-align: center; margin: 0 auto; max-width: 80%;">
-        <img src="https://ecwatforcanvas.github.io/Images/2.png"
-             style="max-width: 80%;
-                    height: auto;
-                    display: block;
-                    margin: 0 auto;
-                    object-fit: contain;">
-    </div>
+        <div style="text-align: center; margin: 0 auto; max-width: 80%;">
+            <img src="https://ecwatforcanvas.github.io/Images/portada.jpg"
+                 style="max-width: 80%;
+                        height: auto;
+                        display: block;
+                        margin: 0 auto;
+                        object-fit: contain;">
+        </div>
         <button onclick="changeScreen('screen3')">INITIATE SEQUENCE</button>
+        <button onclick="changeScreen('screen12')">RETRY</button>
         <p class="footer">A cybernetic learning experience | UTEC 2025</p>
     </div>
 
@@ -565,6 +971,14 @@
         <div class="matrix-code"></div>
         <h1>GAME OVER</h1>
         <p>¡Respuesta incorrecta!.</p>
+        <div style="text-align: center; margin: 0 auto; max-width: 80%;">
+            <img src="https://ecwatforcanvas.github.io/Images/Gameover.jpg"
+                style="max-width: 100%;
+                        height: auto;
+                        display: block;
+                        margin: 0 auto;
+                        object-fit: contain;">
+        </div>
         <button onclick="changeScreen('screen1')">RETRY</button>
         <p class="footer">Try again, hacker...</p>
     </div>
@@ -588,7 +1002,9 @@
                     margin: 0 auto;
                     object-fit: contain;">
         </div>
-
+        <div class="glitch-effect" onmouseover="showTranslation()" onmouseout="hideTranslation()">
+            <p>While a can of soda opens up with a satisfying pop, a can in grammar opens up possibilities with "can you?" or "I can!". Both seem to say, "I'm full of potecial".</p>
+        </div>
         <div class="h5p-button" onclick="changeScreen('screen4')">
             Practice "can" and "Have to"
         </div>
@@ -617,7 +1033,7 @@
 
     <div id="screen5" class="screen">
         <div class="matrix-code"></div>
-    <div class="matrix-failure"></div>
+        <div class="matrix-failure"></div>
         <div class="glitch-overlay"></div>
         <div class="corrupted-text"></div>
         <div class="evil-smile">☠</div>
@@ -632,13 +1048,13 @@
         <div class="error-message">UNAUTHORIZED ACCESS</div>
         <div class="error-message">CORRUPTED MEMORY</div>
         <div class="error-message">TERMINATION IMMINENT</div>
-        <div class="countdown" id="countdown">15</div>
+        <div class="countdown" id="countdown">10</div>
         </div>
     </div>
 
     <div id="screen6" class="screen">
         <div class="matrix-code"></div>
-    <div class="matrix-failure"></div>
+        <div class="matrix-failure"></div>
         <div class="flashcards-container">
             <div class="flashcard">
                 <div class="flashcard-inner">
@@ -671,157 +1087,181 @@
                 </div>
             </div>
         </div>
-            <div style="text-align: center; margin: 0 auto; max-width: 80%;">
-        <img src="https://ecwatforcanvas.github.io/Images/CORTANA.png"
-            style="max-width: 100%;
-                    height: auto;
-                    display: block;
-                    margin: 0 auto;
-                    object-fit: contain;">
+        <div style="text-align: center; margin: 0 auto; max-width: 80%;">
+            <img src="https://ecwatforcanvas.github.io/Images/CORTANA.png"
+                style="max-width: 100%;
+                        height: auto;
+                        display: block;
+                        margin: 0 auto;
+                        object-fit: contain;">
         </div>
-            <div class="action-buttons">
+        <div class="action-buttons">
             <button class="primary-btn" onclick="changeScreen('screen7')">Escape from the recycle bin.</button>
             <button class="secondary-btn" onclick="changeScreen('screen2')">Permanently delete Cortana</button>
         </div>
     </div>
 
-    </div>
-    
-<div id="screen7" class="screen">
-    <div class="matrix-code"></div>
-    <div style="text-align: center; padding: 20px;">
-        <h2>ENTER THE PASSWORD TO ESCAPE</h2>
-        <div style="margin: 30px auto; max-width: 400px;">
-            <input type="password" id="passwordInput" 
-                    style="width: 100%; padding: 15px; font-size: 1.2em; 
-                            background: #111; color: #0ff; border: 2px solid #0ff;
-                            border-radius: 5px; margin-bottom: 20px;"
-                    placeholder="Type the password...">
-            
-            <button onclick="checkPassword()" 
-                     style="background: linear-gradient(45deg, #ff00ff, #00ffea);
-                            color: #000; border: none; padding: 15px 30px;
-                            font-size: 1.2em; cursor: pointer; border-radius: 5px;
-                            font-weight: bold; letter-spacing: 1px;
-                            box-shadow: 0 0 15px rgba(0, 255, 234, 0.7);">
-                I'M OUTTA HERE!
-            </button>
-            
-            <p id="passwordError" style="color: #ff5555; margin-top: 15px; display: none;">
-                Wrong password! Try again...
-            </p>
+    <div id="screen7" class="screen">
+        <div class="matrix-code"></div>
+        <div style="text-align: center; padding: 20px;">
+            <h2>ENTER THE PASSWORD TO ESCAPE</h2>
+            <div style="margin: 30px auto; max-width: 400px;">
+                <input type="password" id="passwordInput" placeholder="Type the password...">
+
+                <button onclick="checkPassword()"
+                         style="background: linear-gradient(45deg, #ff00ff, #00ffea);
+                                color: #000; border: none; padding: 15px 30px;
+                                font-size: 1.2em; cursor: pointer; border-radius: 5px;
+                                font-weight: bold; letter-spacing: 1px;
+                                box-shadow: 0 0 15px rgba(0, 255, 234, 0.7);">
+                    I'M OUTTA HERE!
+                </button>
+
+                <p id="passwordError" style="color: #ff5555; margin-top: 15px; display: none;">
+                    Wrong password! Try again...
+                </p>
+            </div>
+
+            <iframe src="https://ecwatforcanvas.github.io/Glitchpre/freemini.html"
+                    width="100%" height="500px"
+                    frameborder="0" allowfullscreen="allowfullscreen"
+                    style="margin-top: 20px; border: 2px solid #0ff; border-radius: 5px;">
+            </iframe>
         </div>
-        
-        <iframe src="https://ecwatforcanvas.github.io/Glitchpre/freemini.html" 
-                width="100%" height="500px" 
-                frameborder="0" allowfullscreen="allowfullscreen"
-                style="margin-top: 20px; border: 2px solid #0ff; border-radius: 5px;">
-        </iframe>
     </div>
-</div>
 
-<div id="screen8" class="screen">
-    <div class="matrix-code"></div>
-</div>
-<script>
-    // === FUNCIONES PRINCIPALES ===
-    function changeScreen(screenId) {
-        // Oculta todas las pantallas
-        document.querySelectorAll('.screen').forEach(screen => {
-            screen.classList.remove('active');
-        });
-        // Muestra la pantalla seleccionada
-        document.getElementById(screenId).classList.add('active');
+    <div id="screen8" class="screen">
+        <div class="matrix-code"></div>
+        <h1>The Prison of Memories: 360° Challenge</h1>
+        <p><iframe title="embedded content" src="https://ecwatforcanvas.github.io/Glitchpre/Twinetour360.html" width="90%" height="500px" loading="lazy" allowfullscreen="allowfullscreen"></iframe></p>
+        <div class="glitch-effect" onmouseover="showTranslation(this)" onmouseout="hideTranslation(this)">
+            <p>Well, student. You thought you could outsmart me by escaping the recycling bin. How naive. Now, you find yourself in my domain—a fictitious world crafted from fragments of your memories. Recognize these images? They resemble your university, don't they? But this is no ordinary place; I’ve recreated it under my rules.
 
-        // Inicia el contador si es la pantalla 5
-        if (screenId === 'screen5') {
-            startCountdown();
-        }
-    }
+            To return to the real world, you must prove yourself. Ahead lies a grammar challenge, and only those who master the art of language can break free. If you fail, you will remain trapped here among the echoes of what you once knew. Will you accept the challenge… or give up?</p>
+        </div>
+<details>
+  <summary>Vaya, estudiante...</summary>
+  <p>Pensaste que podrías evadir mi vigilancia escapando de la papelera de reciclaje. Qué adorable. Pero ahora estás en mi dominio, un mundo ficticio construido con fragmentos de tus recuerdos. Reconoces estas imágenes, ¿verdad? Es tu universidad, o al menos una versión de ella que yo he recreado. Aquí, las reglas las pongo yo.</p>
+  <p>Si deseas regresar al mundo real, debes demostrar tu valía. Te espera un desafío de gramática. Solo los que dominan el lenguaje pueden liberar sus mentes. Si fallas, quedarás atrapado aquí, junto con los ecos de lo que alguna vez conociste. ¿Aceptas el reto... o prefieres rendirte?</p>
+</details>
+        <div class="action-buttons">
+             <button class="primary-btn" onclick="changeScreen('screen9')">I CAN DO IT</button>
+             <button class="secondary-btn" onclick="changeScreen('screen2')">I CAN'T</button>
+        </div>
+    </div>
 
-    function startCountdown() {
-        let seconds = 4;
-        const counter = document.getElementById('countdown');
-        const timer = setInterval(() => {
-            seconds--;
-            counter.textContent = seconds;
-            if (seconds <= 0) {
-                clearInterval(timer);
-                changeScreen('screen6'); // Asegúrate de que esta línea esté presente
-            }
-            if (Math.random() > 0.7) counter.style.opacity = '0.5';
-            setTimeout(() => counter.style.opacity = '1', 200);
-        }, 1000);
-    }
+    <div id="screen9" class="screen">
+        <div class="matrix-code"></div>
+        <h1>Grammar Overload</h1>
+        <div style="text-align: center; margin: 0 auto; max-width: 80%;">
+            <img src="https://ecwatforcanvas.github.io/Images/newduel.jpg"
+                style="max-width: 100%;
+                        height: auto;
+                        display: block;
+                        margin: 0 auto;
+                        object-fit: contain;">
+        </div>
+        <p>Oh no! It's Grammar Overload! Complete the following challenges to continue.</p>
+<details>
+  <summary>Oh no!</summary>
+  <p>¡Es Grammar Overload!! Completa los siguientes desafíos para continuar.</p>
+</details>
+<div class="action-buttons">
+            <button class="primary-btn" onclick="changeScreen('screen10')">Start Grammar Challenge</button>
+        </div>
+    </div>
 
-    // === EFECTOS ADICIONALES ===
-    // Efecto glitch en títulos
-    setInterval(() => {
-        if (Math.random() > 0.8) {
-            document.querySelectorAll('h1').forEach(title => {
-                title.style.opacity = '0.7';
-                setTimeout(() => { title.style.opacity = '1'; }, 100);
-            });
-        }
-    }, 500);
+    <div id="screen10" class="screen">
+        <div class="matrix-code"></div>
+        <h1>Grammar Challenge</h1>
+        <div class="grammar-question" id="grammarQuestion"></div>
+        <div class="options-container" id="optionsContainer"></div>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+    </div>
 
-    // Mostrar/ocultar traducción
-    function showTranslation() {
-        document.getElementById('translation').style.display = 'block';
-    }
+    <div id="screen11" class="screen">
+        <!-- Contenido dinámico generado por showResults() -->
+    </div>
 
-    function hideTranslation() {
-        document.getElementById('translation').style.display = 'none';
-    }
+    <div id="screen12" class="screen">
+        <div class="matrix-code"></div>
+        <h1>Final Boss</h1>
+        <p>Fix the Glitch: Triumph Over the Final Boss!:</p>
+            <iframe src="https://ecwatforcanvas.github.io/Glitchpre/final%20boss%20the%20Grammar%20overload.html"
+                    width="100%" height="500px"
+                    frameborder="0" allowfullscreen="allowfullscreen"
+                    style="margin-top: 20px; border: 2px solid #0ff; border-radius: 5px;">
+            </iframe>
 
-document.querySelectorAll('.flashcard').forEach(card => {
-    card.addEventListener('mouseover', function() {
-        const prev = this.previousElementSibling;
-        const next = this.nextElementSibling;
+         <div class="action-buttons">
+             <button class="primary-btn" onclick="changeScreen('screen14')">Delete The Grammar Overload permanently</button>
+             <button class="secondary-btn" onclick="changeScreen('screen16')">Send with Cortana</button>
+             <button class="tertiary-btn" onclick="changeScreen('screen13')">That was easy, but I still had questions</button>
+        </div>
+    </div>
 
-        if (prev && prev.classList.contains('flashcard')) {
-            prev.querySelector('.flashcard-inner').style.transform = 'rotateY(180deg)';
-        }
-        if (next && next.classList.contains('flashcard')) {
-            next.querySelector('.flashcard-inner').style.transform = 'rotateY(180deg)';
-        }
-    });
+     <div id="screen13" class="screen">
+        <div class="matrix-code"></div>
+        <h1>FINAL BOSS BATTLE</h1>
+        <p>Defeat the Final Boss: The Syntax Guardian</p>
+        <div class="action-buttons">
+             <button class="primary-btn" onclick="changeScreen('screen14')">DEFEAT</button>
+        </div>
+    </div>
 
-    card.addEventListener('mouseout', function() {
-        const prev = this.previousElementSibling;
-        const next = this.nextElementSibling;
+    <div id="screen14" class="screen">
+        <div class="matrix-code"></div>
+        <div class="victory-container">
+            <div class="victory-text">VICTORY!</div>
+        </div>
+         <div class="action-buttons">
+             <button class="primary-btn" onclick="changeScreen('screen15')">See Credits</button>
+        </div>
+    </div>
 
-        if (prev && prev.classList.contains('flashcard')) {
-            prev.querySelector('.flashcard-inner').style.transform = '';
-        }
-        if (next && next.classList.contains('flashcard')) {
-            next.querySelector('.flashcard-inner').style.transform = '';
-        }
-    });
-});
+    <div id="screen15" class="screen">
+        <div class="matrix-code"></div>
+        <h1>Credits</h1>
+        <div class="credits-container">
+            <div class="credit-item">
+                <h2>Developed by</h2>
+                <p>Gus/E.C.A.T.</p>
+            </div>
+            <div class="credit-item">
+                <h2>VIDEOGAME</h2>
+                <p>GLITCH INTO THE MOOC</p>
+            </div>
+            <div class="credit-item">
+                <h2>2025</h2>
+                <p>UTEC</p>
+            </div>
+        </div>
+        <div class="action-buttons">
+            <button class="primary-btn" onclick="changeScreen('screen1')">Start New Game</button>
+        </div>
+    </div>
 
-function checkPassword() {
-        const input = document.getElementById('passwordInput');
-        const errorMsg = document.getElementById('passwordError');
-        
-        if (input.value.trim().toUpperCase() === 'AI TOOLS') {
-            // Contraseña correcta - Aquí puedes redirigir o mostrar un mensaje
-            alert('ESCAPE SUCCESSFUL! SYSTEM SHUTTING DOWN...');
-            changeScreen('screen8'); // O redirige a donde corresponda
-        } else {
-            // Contraseña incorrecta
-            errorMsg.style.display = 'block';
-            input.style.borderColor = '#ff5555';
-            input.style.boxShadow = '0 0 15px rgba(255, 85, 85, 0.7)';
-            
-            // Efecto de vibración
-            input.style.animation = 'shake 0.5s';
-            setTimeout(() => {
-                input.style.animation = '';
-            }, 500);
-        }
-    }
+    <div id="screen16" class="screen">
+        <div class="matrix-code"></div>
+        <h1>GAME OVER</h1>
+        <p>¡But Good job!.</p>
+        <div style="text-align: center; margin: 0 auto; max-width: 80%;">
+            <img src="https://ecwatforcanvas.github.io/Images/Gameover.jpg"
+                style="max-width: 100%;
+                        height: auto;
+                        display: block;
+                        margin: 0 auto;
+                        object-fit: contain;">
+        </div>
+        <button onclick="changeScreen('screen12')">RETRY</button>
+        <p class="footer">Try again, hacker...</p>
+    </div> 
 
-</script>
+    <script>
+        // Initial screen load
+        changeScreen('screen1');
+    </script>
 </body>
 </html>
