@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIM'S CHALLENGE</title>
+    <style>
+        body {
+            background-color: #0a0a1a;
+            color: #00ffcc;
+            font-family: 'Courier New', monospace;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 204, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(102, 51, 255, 0.1) 0%, transparent 20%);
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 2px solid #6633ff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(102, 51, 255, 0.5);
+            background-color: rgba(10, 10, 26, 0.9);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ff00aa;
+            text-shadow: 0 0 10px rgba(255, 0, 170, 0.7);
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        
+        .challenge {
+            border: 1px solid #6633ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: rgba(20, 20, 40, 0.7);
+            display: none;
+        }
+        
+        .challenge.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .question {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: rgba(0, 255, 204, 0.1);
+            border-left: 3px solid #00ffcc;
+        }
+        
+        button {
+            background-color: #ff00aa;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background-color: #cc0088;
+            box-shadow: 0 0 10px rgba(255, 0, 170, 0.7);
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .progress {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2em;
+            color: #ff00aa;
+        }
+        
+        .password-box {
+            text-align: center;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        input[type="text"] {
+            background-color: rgba(0, 255, 204, 0.1);
+            border: 1px solid #00ffcc;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            width: 200px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .correct {
+            color: #00ff00;
+        }
+        
+        .incorrect {
+            color: #ff0000;
+        }
+        
+        .alien {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 100px;
+            opacity: 0.7;
+            transition: all 0.5s;
+        }
+        
+        .alien:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        
+        .hint {
+            color: #6633ff;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GIM'S CHALLENGE</h1>
+        <p>Welcome, Earthling! I am GIM from planet Linguarion. Our civilization thrives on perfect grammar. Complete all challenges with 100% accuracy to receive the password for the Final Battle.</p>
+        
+        <div class="progress">Challenge 1 of 12</div>
+        
+        <!-- Challenge 1: Can and Have To -->
+        <div class="challenge active" id="challenge1">
+            <h2>Challenge 1: Can and Have To</h2>
+            <p>Complete the sentences with "can", "can't", "have to", or "don't have to":</p>
+            
+            <div class="question">
+                <p>1. You ____ use a calculator during the test. It's not allowed.</p>
+                <input type="text" id="q1-1">
+                <span class="hint">(ability, negative)</span>
+            </div>
+            
+            <div class="question">
+                <p>2. We ____ wear a uniform at our school. It's the rule.</p>
+                <input type="text" id="q1-2">
+                <span class="hint">(obligation)</span>
+            </div>
+            
+            <div class="question">
+                <p>3. She ____ come to the party if she doesn't want to. It's optional.</p>
+                <input type="text" id="q1-3">
+                <span class="hint">(no obligation)</span>
+            </div>
+        </div>
+        
+        <!-- Challenge 2: Simple Past -->
+        <div class="challenge" id="challenge2">
+            <h2>Challenge 2: Simple Past</h2>
+            <p>Convert these verbs to simple past tense:</p>
+            
+            <div class="question">
+                <p>1. She (go) ____ to the store yesterday.</p>
+                <input type="text" id="q2-1">
+                <span class="hint">(irregular verb)</span>
+            </div>
+            
+            <div class="question">
+                <p>2. They (study) ____ for the test last night.</p>
+                <input type="text" id="q2-2">
+                <span class="hint">(regular verb, consonant + y ending)</span>
+            </div>
+            
+            <div class="question">
+                <p>3. I (eat) ____ breakfast at 7am this morning.</p>
+                <input type="text" id="q2-3">
+                <span class="hint">(irregular verb)</span>
+            </div>
+        </div>
+        
+        <!-- Challenge 3: Past of Be -->
+        <div class="challenge" id="challenge3">
+            <h2>Challenge 3: Past of Be</h2>
+            <p>Fill in the blanks with "was", "were", "wasn't", or "weren't":</p>
+            
+            <div class="question">
+                <p>1. The aliens ____ friendly when they visited Earth.</p>
+                <input type="text" id="q3-1">
+            </div>
+            
+            <div class="question">
+                <p>2. I ____ at home yesterday. I went to the space museum.</p>
+                <input type="text" id="q3-2">
+            </div>
+            
+            <div class="question">
+                <p>3. ____ you scared when you saw the UFO?</p>
+                <input type="text" id="q3-3">
+            </div>
+        </div>
+        
+        <!-- Challenge 4: Present Continuous -->
+        <div class="challenge" id="challenge4">
+            <h2>Challenge 4: Present Continuous</h2>
+            <p>Complete the sentences with the present continuous form of the verb:</p>
+            
+            <div class="question">
+                <p>1. Right now, the spaceship ____ (land) on our planet.</p>
+                <input type="text" id="q4-1">
+            </div>
+            
+            <div class="question">
+                <p>2. The aliens ____ (not/study) human behavior at the moment.</p>
+                <input type="text" id="q4-2">
+            </div>
+            
+            <div class="question">
+                <p>3. ____ you ____ (listen) to the alien transmission?</p>
+                <input type="text" id="q4-3" placeholder="First word">
+                <input type="text" id="q4-4" placeholder="Second word">
+            </div>
+        </div>
+        
+        <!-- Challenge 5: Simple Present -->
+        <div class="challenge" id="challenge5">
+            <h2>Challenge 5: Simple Present</h2>
+            <p>Fill in the blanks with the correct simple present form:</p>
+            
+            <div class="question">
+                <p>1. The alien ambassador ____ (visit) Earth every 50 years.</p>
+                <input type="text" id="q5-1">
+            </div>
+            
+            <div class="question">
+                <p>2. Humans ____ (not/understand) the alien language yet.</p>
+                <input type="text" id="q5-2">
+            </div>
+            
+            <div class="question">
+                <p>3. ____ your teacher ____ (know) about extraterrestrial life?</p>
+                <input type="text" id="q5-3" placeholder="First word">
+                <input type="text" id="q5-4" placeholder="Second word">
+            </div>
+        </div>
+        
+        <!-- Challenge 6: Regular Verbs -->
+        <div class="challenge" id="challenge6">
+            <h2>Challenge 6: Regular Verbs</h2>
+            <p>Convert these regular verbs to past tense:</p>
+            
+            <div class="question">
+                <p>1. The robot ____ (clean) the spaceship yesterday.</p>
+                <input type="text" id="q6-1">
+            </div>
+            
+            <div class="question">
+                <p>2. We ____ (try) to communicate with the aliens last week.</p>
+                <input type="text" id="q6-2">
+            </div>
+            
+            <div class="question">
+                <p>3. She ____ (stop) the experiment when it became dangerous.</p>
+                <input type="text" id="q6-3">
+            </div>
+        </div>
+        
+        <!-- Challenge 7: Irregular Verbs -->
+        <div class="challenge" id="challenge7">
+            <h2>Challenge 7: Irregular Verbs</h2>
+            <p>Convert these irregular verbs to past tense:</p>
+            
+            <div class="question">
+                <p>1. The scientist ____ (write) a report about the discovery.</p>
+                <input type="text" id="q7-1">
+            </div>
+            
+            <div class="question">
+                <p>2. I ____ (see) a strange light in the sky last night.</p>
+                <input type="text" id="q7-2">
+            </div>
+            
+            <div class="question">
+                <p>3. They ____ (take) samples of our atmosphere.</p>
+                <input type="text" id="q7-3">
+            </div>
+        </div>
+        
+        <!-- Challenge 8: Object Pronouns -->
+        <div class="challenge" id="challenge8">
+            <h2>Challenge 8: Object Pronouns</h2>
+            <p>Replace the underlined words with object pronouns:</p>
+            
+            <div class="question">
+                <p>1. The alien gave <u>the human</u> a message. → The alien gave ____ a message.</p>
+                <input type="text" id="q8-1">
+            </div>
+            
+            <div class="question">
+                <p>2. Please tell <u>John and me</u> the truth. → Please tell ____ the truth.</p>
+                <input type="text" id="q8-2">
+            </div>
+            
+            <div class="question">
+                <p>3. The spaceship is following <u>our car</u>! → The spaceship is following ____!</p>
+                <input type="text" id="q8-3">
+            </div>
+        </div>
+        
+        <!-- Challenge 9: Comparative Adjectives -->
+        <div class="challenge" id="challenge9">
+            <h2>Challenge 9: Comparative Adjectives</h2>
+            <p>Complete the sentences with the comparative form of the adjective:</p>
+            
+            <div class="question">
+                <p>1. Alien technology is ____ (advanced) than ours.</p>
+                <input type="text" id="q9-1">
+            </div>
+            
+            <div class="question">
+                <p>2. This planet is ____ (cold) than Earth.</p>
+                <input type="text" id="q9-2">
+            </div>
+            
+            <div class="question">
+                <p>3. Their spaceships are ____ (fast) but ____ (dangerous) than our rockets.</p>
+                <input type="text" id="q9-3" placeholder="First word">
+                <input type="text" id="q9-4" placeholder="Second word">
+            </div>
+        </div>
+        
+        <!-- Challenge 10: Modal Should -->
+        <div class="challenge" id="challenge10">
+            <h2>Challenge 10: Modal Should</h2>
+            <p>Complete the sentences with "should" or "shouldn't" and the correct verb:</p>
+            
+            <div class="question">
+                <p>1. You ____ (eat) that strange alien fruit. It might be poisonous.</p>
+                <input type="text" id="q10-1" placeholder="Modal">
+                <input type="text" id="q10-2" placeholder="Verb">
+            </div>
+            
+            <div class="question">
+                <p>2. We ____ (study) more if we want to understand their technology.</p>
+                <input type="text" id="q10-3" placeholder="Modal">
+                <input type="text" id="q10-4" placeholder="Verb">
+            </div>
+            
+            <div class="question">
+                <p>3. ____ I ____ (report) this sighting to the authorities?</p>
+                <input type="text" id="q10-5" placeholder="First word">
+                <input type="text" id="q10-6" placeholder="Second word">
+            </div>
+        </div>
+        
+        <!-- Challenge 11: Modal Could -->
+        <div class="challenge" id="challenge11">
+            <h2>Challenge 11: Modal Could</h2>
+            <p>Complete the sentences with "could" or "couldn't":</p>
+            
+            <div class="question">
+                <p>1. The human ____ understand the alien's message.</p>
+                <input type="text" id="q11-1">
+            </div>
+            
+            <div class="question">
+                <p>2. ____ you hear that strange noise last night?</p>
+                <input type="text" id="q11-2">
+            </div>
+            
+            <div class="question">
+                <p>3. When I was younger, I ____ run faster than light speed. (just kidding!)</p>
+                <input type="text" id="q11-3">
+            </div>
+        </div>
+        
+        <!-- Challenge 12: Mixed Review -->
+        <div class="challenge" id="challenge12">
+            <h2>Challenge 12: Mixed Review</h2>
+            <p>Final test! Complete these sentences correctly:</p>
+            
+            <div class="question">
+                <p>1. The aliens ____ (be) here last night, but they ____ (not/stay) long.</p>
+                <input type="text" id="q12-1" placeholder="First word">
+                <input type="text" id="q12-2" placeholder="Second word">
+            </div>
+            
+            <div class="question">
+                <p>2. Right now, scientists ____ (analyze) the data from the UFO sighting.</p>
+                <input type="text" id="q12-3">
+            </div>
+            
+            <div class="question">
+                <p>3. You ____ (should/contact) the authorities if you ____ (see) anything suspicious.</p>
+                <input type="text" id="q12-4" placeholder="First part">
+                <input type="text" id="q12-5" placeholder="Second part">
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+        
+        <div class="password-box" id="passwordBox">
+            <h2>Congratulations! You've completed all challenges!</h2>
+            <p>The password is: <em>"THE etymological origin of the word 'robot'"</em></p>
+            <p>Ask an AI tool if you don't know.</p>
+            <input type="text" id="passwordInput" placeholder="Enter password">
+            <button id="submitPassword">Submit</button>
+            <p id="passwordFeedback"></p>
+        </div>
+    </div>
+    
+    <img src="https://ecwatforcanvas.github.io/Glitchpre/outer-space-alien.png" alt="Alien" class="alien">
+    
+    <script>
+        // Challenge answers
+        const answers = {
+            // Challenge 1
+            'q1-1': "can't",
+            'q1-2': "have to",
+            'q1-3': "doesn't have to",
+            
+            // Challenge 2
+            'q2-1': "went",
+            'q2-2': "studied",
+            'q2-3': "ate",
+            
+            // Challenge 3
+            'q3-1': "were",
+            'q3-2': "wasn't",
+            'q3-3': "Were",
+            
+            // Challenge 4
+            'q4-1': "is landing",
+            'q4-2': "aren't studying",
+            'q4-3': "Are",
+            'q4-4': "listening",
+            
+            // Challenge 5
+            'q5-1': "visits",
+            'q5-2': "don't understand",
+            'q5-3': "Does",
+            'q5-4': "know",
+            
+            // Challenge 6
+            'q6-1': "cleaned",
+            'q6-2': "tried",
+            'q6-3': "stopped",
+            
+            // Challenge 7
+            'q7-1': "wrote",
+            'q7-2': "saw",
+            'q7-3': "took",
+            
+            // Challenge 8
+            'q8-1': "him/her",
+            'q8-2': "us",
+            'q8-3': "it",
+            
+            // Challenge 9
+            'q9-1': "more advanced",
+            'q9-2': "colder",
+            'q9-3': "faster",
+            'q9-4': "more dangerous",
+            
+            // Challenge 10
+            'q10-1': "shouldn't",
+            'q10-2': "eat",
+            'q10-3': "should",
+            'q10-4': "study",
+            'q10-5': "Should",
+            'q10-6': "report",
+            
+            // Challenge 11
+            'q11-1': "couldn't",
+            'q11-2': "Could",
+            'q11-3': "couldn't",
+            
+            // Challenge 12
+            'q12-1': "were",
+            'q12-2': "didn't stay",
+            'q12-3': "are analyzing",
+            'q12-4': "should contact",
+            'q12-5': "see"
+        };
+        
+        // Current challenge
+        let currentChallenge = 1;
+        const totalChallenges = 12;
+        let score = 0;
+        const maxScore = Object.keys(answers).length;
+        
+        // DOM elements
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressDisplay = document.querySelector('.progress');
+        const passwordBox = document.getElementById('passwordBox');
+        const passwordInput = document.getElementById('passwordInput');
+        const submitPassword = document.getElementById('submitPassword');
+        const passwordFeedback = document.getElementById('passwordFeedback');
+        
+        // Navigation
+        nextBtn.addEventListener('click', () => {
+            if (validateCurrentChallenge()) {
+                if (currentChallenge < totalChallenges) {
+                    document.getElementById(`challenge${currentChallenge}`).classList.remove('active');
+                    currentChallenge++;
+                    document.getElementById(`challenge${currentChallenge}`).classList.add('active');
+                    updateNavigation();
+                } else {
+                    // All challenges completed
+                    document.getElementById(`challenge${currentChallenge}`).classList.remove('active');
+                    passwordBox.style.display = 'block';
+                }
+            }
+        });
+        
+        prevBtn.addEventListener('click', () => {
+            document.getElementById(`challenge${currentChallenge}`).classList.remove('active');
+            currentChallenge--;
+            document.getElementById(`challenge${currentChallenge}`).classList.add('active');
+            updateNavigation();
+        });
+        
+        // Password submission
+        submitPassword.addEventListener('click', () => {
+            if (passwordInput.value.toLowerCase() === "robota") {
+                passwordFeedback.textContent = "Password correct! Preparing for the Final Battle...";
+                passwordFeedback.className = "correct";
+                setTimeout(() => {
+                    window.location.href = "final_battle.html";
+                }, 2000);
+            } else {
+                passwordFeedback.textContent = "Incorrect password. Try again!";
+                passwordFeedback.className = "incorrect";
+            }
+        });
+        
+        // Validate current challenge
+        function validateCurrentChallenge() {
+            let allCorrect = true;
+            
+            // Get all inputs for current challenge
+            const inputs = document.querySelectorAll(`#challenge${currentChallenge} input[type="text"]`);
+            
+            inputs.forEach(input => {
+                const userAnswer = input.value.trim().toLowerCase();
+                const correctAnswer = answers[input.id].toLowerCase();
+                
+                if (userAnswer === correctAnswer) {
+                    input.style.borderColor = "#00ff00";
+                    score++;
+                } else {
+                    input.style.borderColor = "#ff0000";
+                    allCorrect = false;
+                }
+            });
+            
+            if (!allCorrect) {
+                alert("Some answers are incorrect. Please review and try again!");
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Update navigation buttons and progress
+        function updateNavigation() {
+            progressDisplay.textContent = `Challenge ${currentChallenge} of ${totalChallenges}`;
+            
+            prevBtn.disabled = currentChallenge === 1;
+            
+            if (currentChallenge === totalChallenges) {
+                nextBtn.textContent = "Finish";
+            } else {
+                nextBtn.textContent = "Next";
+            }
+        }
+    </script>
+</body>
+</html>
