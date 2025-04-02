@@ -20,20 +20,20 @@
             right: 10px;
             display: flex;
             justify-content: space-between;
-            z-index: 10; /* Asegura que la UI esté sobre el canvas */
-            align-items: center; /* Centra verticalmente el texto en las barras */
+            z-index: 10;
+            align-items: center;
         }
         .health-bar {
-            height: 30px; /* --- Barra más gruesa --- */
+            height: 30px;
             border: 2px solid #0ff;
-            background-color: #333; /* Fondo un poco más visible */
+            background-color: #333;
             position: relative;
             width: 40%;
-            display: flex; /* Para alinear el texto dentro */
-            align-items: center; /* Centra texto verticalmente */
-            padding: 0 10px; /* Espacio interior para el texto */
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
             box-sizing: border-box;
-            justify-content: space-between; /* Separa nombre y vida numérica */
+            justify-content: space-between;
         }
         .health-fill {
             position: absolute;
@@ -42,25 +42,39 @@
             height: 100%;
             background-color: #f00;
             width: 100%;
-            transition: width 0.2s ease; /* Suaviza el cambio de vida */
-            z-index: 1; /* Detrás del texto */
+            transition: width 0.2s ease;
+            z-index: 1;
         }
-        #hero-health .health-fill {
-            background-color: #0f0; /* Verde para el héroe */
-        }
-        #boss-health .health-fill {
-            background-color: #f00; /* Rojo para el jefe */
-        }
-        /* Estilo para ambos textos dentro de la barra */
+        #hero-health .health-fill { background-color: #0f0; }
+        #boss-health .health-fill { background-color: #f00; }
         .health-bar span {
              color: #fff;
-             font-size: 14px; /* Tamaño de fuente ligeramente mayor */
+             font-size: 14px;
              font-weight: bold;
              text-shadow: 1px 1px 2px #000;
-             z-index: 2; /* Asegura que esté sobre el relleno */
-             position: relative; /* Necesario para z-index */
+             z-index: 2;
+             position: relative;
         }
-        #game-over, #victory {
+        /* Contenedor para Game Over y Botón */
+        #game-over-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none; /* Oculto inicialmente */
+            flex-direction: column; /* Apila texto y botón */
+            align-items: center; /* Centra horizontalmente */
+            z-index: 20;
+        }
+        #game-over {
+             font-size: 48px; /* Más grande */
+             text-align: center;
+             text-shadow: 0 0 10px #f00, 0 0 20px #f00;
+             color: #f00;
+             margin-bottom: 20px; /* Espacio antes del botón */
+             /* display: block; ya no es necesario aquí */
+        }
+        #victory {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -70,11 +84,6 @@
             text-shadow: 0 0 10px #fff, 0 0 20px #fff;
             display: none;
             z-index: 20;
-        }
-        #game-over {
-             color: #f00;
-        }
-        #victory {
              color: #0f0;
         }
         #instructions {
@@ -101,6 +110,23 @@
         #fade-overlay.active {
             opacity: 1;
         }
+        /* Estilo del botón Reintentar */
+        #retry-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            font-family: 'Courier New', monospace;
+            background-color: #111; /* Fondo oscuro */
+            color: #0f0; /* Texto verde neón */
+            border: 2px solid #0f0; /* Borde verde neón */
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s, color 0.3s;
+            /* display: none; Se controla desde el contenedor */
+        }
+        #retry-button:hover {
+            background-color: #0f0; /* Fondo verde al pasar el mouse */
+            color: #000; /* Texto negro */
+        }
 
     </style>
 </head>
@@ -118,7 +144,11 @@
         </div>
     </div>
 
-    <div id="game-over">GAME OVER</div>
+    <div id="game-over-container">
+        <div id="game-over">GAME OVER</div>
+        <button id="retry-button">Volver a intentar</button>
+    </div>
+
     <div id="victory">You defeated the evil AI, The Grammar Overload—congratulations! 🎉</div>
 
     <div id="instructions">
@@ -132,9 +162,11 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const fadeOverlay = document.getElementById('fade-overlay');
-        // --- Selectores para texto de vida ---
         const heroHealthText = document.getElementById('hero-health-text');
         const bossHealthText = document.getElementById('boss-health-text');
+        // --- Selector para contenedor Game Over y botón ---
+        const gameOverContainer = document.getElementById('game-over-container');
+        const retryButton = document.getElementById('retry-button');
 
 
         canvas.width = window.innerWidth;
@@ -168,59 +200,26 @@
 
         function imageLoaded() {
             imagesLoaded++;
-            console.log(`Images loaded: ${imagesLoaded}/${totalImages}`);
+            // console.log(`Images loaded: ${imagesLoaded}/${totalImages}`);
             if (imagesLoaded === totalImages && !gameReady) {
-                console.log("All images loaded. Starting game.");
+                // console.log("All images loaded. Starting game.");
                 gameReady = true;
-                // --- Ajustar posición inicial del héroe aquí ---
-                game.hero.x = canvas.width / 4; // Más centrado
-                game.hero.y = canvas.height / 2 - game.hero.height / 2; // Centrado vertical
-                 // --- Ajustar posición inicial del jefe (si es necesario por el héroe) ---
-                game.boss.x = canvas.width - game.boss.width - (canvas.width / 4); // Simétrico al héroe
-                game.boss.y = canvas.height / 2 - game.boss.height / 2; // Centrado vertical
-
-                updateHealthBars(); // Actualiza barras inicialmente (incluye texto)
+                game.hero.x = canvas.width / 4;
+                game.hero.y = canvas.height / 2 - game.hero.height / 2;
+                game.boss.x = canvas.width - game.boss.width - (canvas.width / 4);
+                game.boss.y = canvas.height / 2 - game.boss.height / 2;
+                updateHealthBars();
                 requestAnimationFrame(gameLoop);
             }
         }
         // --- Fin Carga de Imágenes ---
 
-
         // Configuración del juego
         const game = {
-            hero: {
-                x: 100, // Posición inicial X se ajustará en imageLoaded
-                y: canvas.height / 2 - 56,
-                width: 70,
-                height: 112,
-                speed: 5,
-                health: 20,
-                maxHealth: 20,
-                projectiles: []
-            },
-            boss: {
-                x: canvas.width - 220, // Posición inicial X se ajustará en imageLoaded
-                y: canvas.height / 2 - 60,
-                width: 120,
-                height: 120,
-                speed: 2,
-                health: 10,
-                maxHealth: 10,
-                projectiles: [],
-                attackTimer: 0,
-                attackInterval: 1500,
-                moveDirection: 1,
-                isExploding: false,
-                explosionTime: 0,
-                explosionParticles: []
-            },
-            keys: {
-                ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false
-            },
-            lastTime: 0,
-            gameOver: false,
-            victory: false,
-            isFading: false
+            hero: { x: 100, y: canvas.height / 2 - 56, width: 70, height: 112, speed: 5, health: 20, maxHealth: 20, projectiles: [] },
+            boss: { x: canvas.width - 220, y: canvas.height / 2 - 60, width: 120, height: 120, speed: 2, health: 10, maxHealth: 10, projectiles: [], attackTimer: 0, attackInterval: 1500, moveDirection: 1, isExploding: false, explosionTime: 0, explosionParticles: [] },
+            keys: { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false },
+            lastTime: 0, gameOver: false, victory: false, isFading: false
         };
 
         // --- Configuración Fondo Matrix ---
@@ -229,25 +228,17 @@
         let columns = Math.floor(canvas.width / fontSize);
         let drops = [];
         function initializeMatrix() {
-             columns = Math.floor(canvas.width / fontSize);
-             drops = [];
-             for (let i = 0; i < columns; i++) {
-                 drops[i] = Math.random() * canvas.height / fontSize;
-             }
+             columns = Math.floor(canvas.width / fontSize); drops = [];
+             for (let i = 0; i < columns; i++) { drops[i] = Math.random() * canvas.height / fontSize; }
         }
         initializeMatrix();
-
         function drawMatrixBackground() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#0f0';
-            ctx.font = fontSize + 'px Courier New';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f0'; ctx.font = fontSize + 'px Courier New';
             for (let i = 0; i < drops.length; i++) {
                 const text = matrixLetters[Math.floor(Math.random() * matrixLetters.length)];
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) { drops[i] = 0; }
                 drops[i]++;
             }
         }
@@ -255,56 +246,30 @@
 
         // --- Lógica de Explosión ---
         function createExplosion(x, y) {
-            game.boss.isExploding = true;
-            game.boss.explosionTime = Date.now();
-            game.boss.explosionParticles = [];
-            const particleCount = 50;
-            const explosionPower = 5;
+            game.boss.isExploding = true; game.boss.explosionTime = Date.now(); game.boss.explosionParticles = [];
+            const particleCount = 50, explosionPower = 5;
             for (let i = 0; i < particleCount; i++) {
-                game.boss.explosionParticles.push({
-                    x: x, y: y,
-                    vx: (Math.random() - 0.5) * explosionPower * 2,
-                    vy: (Math.random() - 0.5) * explosionPower * 2,
-                    radius: Math.random() * 4 + 1,
-                    color: `rgb(${Math.random()*255}, ${Math.random()*150}, 0)`,
-                    life: 100
-                });
+                game.boss.explosionParticles.push({ x: x, y: y, vx: (Math.random() - 0.5) * explosionPower * 2, vy: (Math.random() - 0.5) * explosionPower * 2, radius: Math.random() * 4 + 1, color: `rgb(${Math.random()*255}, ${Math.random()*150}, 0)`, life: 100 });
             }
         }
         function updateAndDrawExplosion() {
             if (!game.boss.isExploding) return;
-            const explosionDuration = 1500;
-            const currentTime = Date.now();
+            const explosionDuration = 1500, currentTime = Date.now();
             if (currentTime - game.boss.explosionTime > explosionDuration) {
-                game.boss.isExploding = false;
-                game.boss.explosionParticles = [];
-                startFadeOut();
-                return;
+                game.boss.isExploding = false; game.boss.explosionParticles = []; startFadeOut(); return;
             }
             for (let i = game.boss.explosionParticles.length - 1; i >= 0; i--) {
-                const p = game.boss.explosionParticles[i];
-                p.x += p.vx; p.y += p.vy; p.life--;
-                if (p.life <= 0) {
-                    game.boss.explosionParticles.splice(i, 1);
-                } else {
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2, false);
-                    ctx.fillStyle = p.color;
-                    ctx.fill();
-                }
+                const p = game.boss.explosionParticles[i]; p.x += p.vx; p.y += p.vy; p.life--;
+                if (p.life <= 0) { game.boss.explosionParticles.splice(i, 1); }
+                else { ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2, false); ctx.fillStyle = p.color; ctx.fill(); }
             }
         }
         // --- Fin Lógica de Explosión ---
 
         // --- Lógica de Fade Out ---
         function startFadeOut() {
-            if (game.isFading) return;
-            game.isFading = true;
-            fadeOverlay.classList.add('active');
-            setTimeout(() => {
-                game.victory = true;
-                document.getElementById('victory').style.display = 'block';
-            }, 1000);
+            if (game.isFading) return; game.isFading = true; fadeOverlay.classList.add('active');
+            setTimeout(() => { game.victory = true; document.getElementById('victory').style.display = 'block'; }, 1000);
         }
         // --- Fin Lógica de Fade Out ---
 
@@ -315,44 +280,36 @@
         // Evento de clic para disparar
         canvas.addEventListener('click', (e) => {
             if (game.gameOver || game.victory || game.boss.isExploding || game.isFading) return;
-            const rect = canvas.getBoundingClientRect();
-            const clickX = e.clientX - rect.left; const clickY = e.clientY - rect.top;
+            const rect = canvas.getBoundingClientRect(); const clickX = e.clientX - rect.left; const clickY = e.clientY - rect.top;
             const angle = Math.atan2(clickY - (game.hero.y + game.hero.height / 2), clickX - (game.hero.x + game.hero.width / 2));
-            game.hero.projectiles.push({
-                x: game.hero.x + game.hero.width / 2, y: game.hero.y + game.hero.height / 2,
-                width: 30, height: 30, speed: 5, angle: angle, image: bookImg
-            });
+            game.hero.projectiles.push({ x: game.hero.x + game.hero.width / 2, y: game.hero.y + game.hero.height / 2, width: 30, height: 30, speed: 5, angle: angle, image: bookImg });
         });
 
-        // --- Actualizar barras de salud (incluye texto numérico) ---
+        // --- Evento del botón Reintentar ---
+        retryButton.addEventListener('click', () => {
+            window.location.reload(); // Recarga la página para reiniciar
+        });
+
+        // Actualizar barras de salud
         function updateHealthBars() {
             const heroFill = document.querySelector('#hero-health .health-fill');
             const bossFill = document.querySelector('#boss-health .health-fill');
-
-            const currentHeroHealth = Math.max(0, game.hero.health); // No mostrar negativo
-            const currentBossHealth = Math.max(0, game.boss.health); // No mostrar negativo
-
+            const currentHeroHealth = Math.max(0, game.hero.health);
+            const currentBossHealth = Math.max(0, game.boss.health);
             const heroPercentage = (currentHeroHealth / game.hero.maxHealth) * 100;
             const bossPercentage = (currentBossHealth / game.boss.maxHealth) * 100;
-
-            heroFill.style.width = `${heroPercentage}%`;
-            bossFill.style.width = `${bossPercentage}%`;
-
-            // Actualizar texto numérico
+            heroFill.style.width = `${heroPercentage}%`; bossFill.style.width = `${bossPercentage}%`;
             heroHealthText.innerText = `${currentHeroHealth} / ${game.hero.maxHealth}`;
             bossHealthText.innerText = `${currentBossHealth} / ${game.boss.maxHealth}`;
         }
 
         // Dibujar personajes
         function drawCharacters() {
-            if (!game.gameOver && heroImg.complete && heroImg.naturalHeight !== 0) {
-                 ctx.drawImage(heroImg, game.hero.x, game.hero.y, game.hero.width, game.hero.height);
-            } else if (!game.gameOver) { ctx.fillStyle = 'green'; ctx.fillRect(game.hero.x, game.hero.y, game.hero.width, game.hero.height); }
-
+            if (!game.gameOver && heroImg.complete && heroImg.naturalHeight !== 0) { ctx.drawImage(heroImg, game.hero.x, game.hero.y, game.hero.width, game.hero.height); }
+            else if (!game.gameOver) { ctx.fillStyle = 'green'; ctx.fillRect(game.hero.x, game.hero.y, game.hero.width, game.hero.height); }
             if (game.boss.health > 0 && !game.boss.isExploding) {
-                 if (bossImg.complete && bossImg.naturalHeight !== 0) {
-                    ctx.drawImage(bossImg, game.boss.x, game.boss.y, game.boss.width, game.boss.height);
-                 } else { ctx.fillStyle = 'red'; ctx.fillRect(game.boss.x, game.boss.y, game.boss.width, game.boss.height); }
+                 if (bossImg.complete && bossImg.naturalHeight !== 0) { ctx.drawImage(bossImg, game.boss.x, game.boss.y, game.boss.width, game.boss.height); }
+                 else { ctx.fillStyle = 'red'; ctx.fillRect(game.boss.x, game.boss.y, game.boss.width, game.boss.height); }
              }
         }
 
@@ -375,14 +332,9 @@
             // Proyectiles del héroe
             game.hero.projectiles = game.hero.projectiles.filter(proj => {
                 proj.x += Math.cos(proj.angle) * proj.speed; proj.y += Math.sin(proj.angle) * proj.speed;
-                // Colisión con el jefe
-                 if (game.boss.health > 0 && proj.x < game.boss.x + game.boss.width && proj.x + proj.width > game.boss.x && proj.y < game.boss.y + game.boss.height && proj.y + proj.height > game.boss.y) {
-                    game.boss.health--;
-                    updateHealthBars(); // Actualiza barra y texto
-                    if (game.boss.health <= 0) {
-                        createExplosion(game.boss.x + game.boss.width / 2, game.boss.y + game.boss.height / 2);
-                        game.boss.projectiles = [];
-                    }
+                if (game.boss.health > 0 && proj.x < game.boss.x + game.boss.width && proj.x + proj.width > game.boss.x && proj.y < game.boss.y + game.boss.height && proj.y + proj.height > game.boss.y) {
+                    game.boss.health--; updateHealthBars();
+                    if (game.boss.health <= 0) { createExplosion(game.boss.x + game.boss.width / 2, game.boss.y + game.boss.height / 2); game.boss.projectiles = []; }
                     return false;
                 }
                 return proj.x > -proj.width && proj.x < canvas.width && proj.y > -proj.height && proj.y < canvas.height;
@@ -390,11 +342,12 @@
             // Proyectiles del jefe
             game.boss.projectiles = game.boss.projectiles.filter(proj => {
                 proj.x += Math.cos(proj.angle) * proj.speed; proj.y += Math.sin(proj.angle) * proj.speed;
-                // Colisión con el héroe
                 if (proj.x < game.hero.x + game.hero.width && proj.x + proj.width > game.hero.x && proj.y < game.hero.y + game.hero.height && proj.y + proj.height > game.hero.y) {
-                    game.hero.health--;
-                    updateHealthBars(); // Actualiza barra y texto
-                    if (game.hero.health <= 0) { game.gameOver = true; }
+                    game.hero.health--; updateHealthBars();
+                    if (game.hero.health <= 0) {
+                        game.gameOver = true; // Marca Game Over
+                        // Mostrar contenedor de Game Over (se hace en gameLoop)
+                    }
                     return false;
                 }
                 return proj.x > -proj.width && proj.x < canvas.width && proj.y > -proj.height && proj.y < canvas.height;
@@ -436,35 +389,30 @@
              if (!gameReady) { requestAnimationFrame(gameLoop); return; }
 
              // --- Manejo de Estados Finales ---
-             if (game.gameOver) { document.getElementById('game-over').style.display = 'block'; return; }
+             if (game.gameOver) {
+                 // Muestra el contenedor de Game Over (que incluye el botón)
+                 gameOverContainer.style.display = 'flex'; // Usa flex para mostrarlo
+                 return; // Detiene el bucle
+             }
              if (game.victory) { /* Mensaje mostrado por startFadeOut */ return; }
-             if (game.isFading) { requestAnimationFrame(gameLoop); return; } // Necesario para el timeout del fade
+             if (game.isFading) { requestAnimationFrame(gameLoop); return; }
 
              // --- Lógica y Dibujo del Juego Activo ---
              drawMatrixBackground();
-             if (!game.boss.isExploding) { // Pausa la lógica principal durante la explosión
-                 updateHeroPosition();
-                 updateBossPosition();
-                 updateProjectiles();
-                 bossAttack(timestamp);
+             if (!game.boss.isExploding) {
+                 updateHeroPosition(); updateBossPosition(); updateProjectiles(); bossAttack(timestamp);
              }
-             drawCharacters();
-             drawProjectiles();
-             updateAndDrawExplosion(); // Dibuja la explosión si está activa
+             drawCharacters(); drawProjectiles(); updateAndDrawExplosion();
 
              requestAnimationFrame(gameLoop);
         }
 
         // Redimensionar canvas
         window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             initializeMatrix();
-            // Reajustar posiciones al redimensionar para mantenerlos centrados/simétricos
-            game.hero.x = canvas.width / 4;
-            game.hero.y = canvas.height / 2 - game.hero.height / 2;
-            game.boss.x = canvas.width - game.boss.width - (canvas.width / 4);
-            game.boss.y = canvas.height / 2 - game.boss.height / 2;
+            game.hero.x = canvas.width / 4; game.hero.y = canvas.height / 2 - game.hero.height / 2;
+            game.boss.x = canvas.width - game.boss.width - (canvas.width / 4); game.boss.y = canvas.height / 2 - game.boss.height / 2;
             updateHealthBars();
         });
     </script>
