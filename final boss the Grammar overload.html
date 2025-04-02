@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Héroe vs IA Malvada - The Grammar Overload</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000; /* Fondo negro base */
+            font-family: 'Courier New', monospace;
+            color: #0ff;
+        }
+        canvas {
+            display: block;
+        }
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10; /* Asegura que la UI esté sobre el canvas */
+            align-items: center; /* Centra verticalmente el texto en las barras */
+        }
+        .health-bar {
+            height: 30px; /* --- Barra más gruesa --- */
+            border: 2px solid #0ff;
+            background-color: #333; /* Fondo un poco más visible */
+            position: relative;
+            width: 40%;
+            display: flex; /* Para alinear el texto dentro */
+            align-items: center; /* Centra texto verticalmente */
+            padding: 0 10px; /* Espacio interior para el texto */
+            box-sizing: border-box;
+            justify-content: space-between; /* Separa nombre y vida numérica */
+        }
+        .health-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: #f00;
+            width: 100%;
+            transition: width 0.2s ease; /* Suaviza el cambio de vida */
+            z-index: 1; /* Detrás del texto */
+        }
+        #hero-health .health-fill {
+            background-color: #0f0; /* Verde para el héroe */
+        }
+        #boss-health .health-fill {
+            background-color: #f00; /* Rojo para el jefe */
+        }
+        /* Estilo para ambos textos dentro de la barra */
+        .health-bar span {
+             color: #fff;
+             font-size: 14px; /* Tamaño de fuente ligeramente mayor */
+             font-weight: bold;
+             text-shadow: 1px 1px 2px #000;
+             z-index: 2; /* Asegura que esté sobre el relleno */
+             position: relative; /* Necesario para z-index */
+        }
+        #game-over, #victory {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            text-align: center;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff;
+            display: none;
+            z-index: 20;
+        }
+        #game-over {
+             color: #f00;
+        }
+        #victory {
+             color: #0f0;
+        }
+        #instructions {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #0ff;
+            font-size: 14px;
+            z-index: 10;
+            text-shadow: 1px 1px 2px #000;
+        }
+        #fade-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            opacity: 0;
+            z-index: 15;
+            pointer-events: none;
+            transition: opacity 1s ease-in-out;
+        }
+        #fade-overlay.active {
+            opacity: 1;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <div class="health-bar" id="hero-health">
+             <div class="health-fill"></div>
+             <span>HÉROE</span>
+             <span id="hero-health-text">-- / --</span>
+        </div>
+        <div class="health-bar" id="boss-health">
+             <div class="health-fill"></div>
+             <span>IA MALVADA</span>
+              <span id="boss-health-text">-- / --</span>
+        </div>
+    </div>
+
+    <div id="game-over">GAME OVER</div>
+    <div id="victory">You defeated the evil AI, The Grammar Overload—congratulations! 🎉</div>
+
+    <div id="instructions">
+        Flechas para mover, Click para lanzar libros (Jefe: 10 golpes, Héroe: 20 vidas)
+    </div>
+
+    <div id="fade-overlay"></div>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const fadeOverlay = document.getElementById('fade-overlay');
+        // --- Selectores para texto de vida ---
+        const heroHealthText = document.getElementById('hero-health-text');
+        const bossHealthText = document.getElementById('boss-health-text');
+
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // --- Carga de Imágenes ---
+        let imagesLoaded = 0;
+        const totalImages = 4;
+        let gameReady = false;
+
+        const heroImg = new Image();
+        const bossImg = new Image();
+        const bookImg = new Image();
+        const flameImg = new Image();
+
+        heroImg.onload = imageLoaded;
+        bossImg.onload = imageLoaded;
+        bookImg.onload = imageLoaded;
+        flameImg.onload = imageLoaded;
+
+        heroImg.src = 'https://ecwatforcanvas.github.io/Images/Student.png';
+        bossImg.src = 'https://ecwatforcanvas.github.io/Glitchpre/cartoon.png';
+        bookImg.src = 'https://ecwatforcanvas.github.io/Glitchpre/book.png';
+        flameImg.src = 'https://ecwatforcanvas.github.io/Glitchpre/flame.png';
+
+        heroImg.onerror = () => { console.error("Error loading hero image."); imageLoaded(); heroImg.src='https://placehold.co/70x112/0f0/000?text=Hero'; };
+        bossImg.onerror = () => { console.error("Error loading boss image."); imageLoaded(); bossImg.src='https://placehold.co/120x120/f00/000?text=Boss'; };
+        bookImg.onerror = () => { console.error("Error loading book image."); imageLoaded(); bookImg.src='https://placehold.co/30x30/00f/fff?text=Book'; };
+        flameImg.onerror = () => { console.error("Error loading flame image."); imageLoaded(); flameImg.src='https://placehold.co/40x40/f80/000?text=Flame'; };
+
+
+        function imageLoaded() {
+            imagesLoaded++;
+            console.log(`Images loaded: ${imagesLoaded}/${totalImages}`);
+            if (imagesLoaded === totalImages && !gameReady) {
+                console.log("All images loaded. Starting game.");
+                gameReady = true;
+                // --- Ajustar posición inicial del héroe aquí ---
+                game.hero.x = canvas.width / 4; // Más centrado
+                game.hero.y = canvas.height / 2 - game.hero.height / 2; // Centrado vertical
+                 // --- Ajustar posición inicial del jefe (si es necesario por el héroe) ---
+                game.boss.x = canvas.width - game.boss.width - (canvas.width / 4); // Simétrico al héroe
+                game.boss.y = canvas.height / 2 - game.boss.height / 2; // Centrado vertical
+
+                updateHealthBars(); // Actualiza barras inicialmente (incluye texto)
+                requestAnimationFrame(gameLoop);
+            }
+        }
+        // --- Fin Carga de Imágenes ---
+
+
+        // Configuración del juego
+        const game = {
+            hero: {
+                x: 100, // Posición inicial X se ajustará en imageLoaded
+                y: canvas.height / 2 - 56,
+                width: 70,
+                height: 112,
+                speed: 5,
+                health: 20,
+                maxHealth: 20,
+                projectiles: []
+            },
+            boss: {
+                x: canvas.width - 220, // Posición inicial X se ajustará en imageLoaded
+                y: canvas.height / 2 - 60,
+                width: 120,
+                height: 120,
+                speed: 2,
+                health: 10,
+                maxHealth: 10,
+                projectiles: [],
+                attackTimer: 0,
+                attackInterval: 1500,
+                moveDirection: 1,
+                isExploding: false,
+                explosionTime: 0,
+                explosionParticles: []
+            },
+            keys: {
+                ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false
+            },
+            lastTime: 0,
+            gameOver: false,
+            victory: false,
+            isFading: false
+        };
+
+        // --- Configuración Fondo Matrix ---
+        const matrixLetters = "can have to should could verbs past going".split(" ");
+        const fontSize = 16;
+        let columns = Math.floor(canvas.width / fontSize);
+        let drops = [];
+        function initializeMatrix() {
+             columns = Math.floor(canvas.width / fontSize);
+             drops = [];
+             for (let i = 0; i < columns; i++) {
+                 drops[i] = Math.random() * canvas.height / fontSize;
+             }
+        }
+        initializeMatrix();
+
+        function drawMatrixBackground() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px Courier New';
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixLetters[Math.floor(Math.random() * matrixLetters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        // --- Fin Configuración Fondo Matrix ---
+
+        // --- Lógica de Explosión ---
+        function createExplosion(x, y) {
+            game.boss.isExploding = true;
+            game.boss.explosionTime = Date.now();
+            game.boss.explosionParticles = [];
+            const particleCount = 50;
+            const explosionPower = 5;
+            for (let i = 0; i < particleCount; i++) {
+                game.boss.explosionParticles.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * explosionPower * 2,
+                    vy: (Math.random() - 0.5) * explosionPower * 2,
+                    radius: Math.random() * 4 + 1,
+                    color: `rgb(${Math.random()*255}, ${Math.random()*150}, 0)`,
+                    life: 100
+                });
+            }
+        }
+        function updateAndDrawExplosion() {
+            if (!game.boss.isExploding) return;
+            const explosionDuration = 1500;
+            const currentTime = Date.now();
+            if (currentTime - game.boss.explosionTime > explosionDuration) {
+                game.boss.isExploding = false;
+                game.boss.explosionParticles = [];
+                startFadeOut();
+                return;
+            }
+            for (let i = game.boss.explosionParticles.length - 1; i >= 0; i--) {
+                const p = game.boss.explosionParticles[i];
+                p.x += p.vx; p.y += p.vy; p.life--;
+                if (p.life <= 0) {
+                    game.boss.explosionParticles.splice(i, 1);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2, false);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                }
+            }
+        }
+        // --- Fin Lógica de Explosión ---
+
+        // --- Lógica de Fade Out ---
+        function startFadeOut() {
+            if (game.isFading) return;
+            game.isFading = true;
+            fadeOverlay.classList.add('active');
+            setTimeout(() => {
+                game.victory = true;
+                document.getElementById('victory').style.display = 'block';
+            }, 1000);
+        }
+        // --- Fin Lógica de Fade Out ---
+
+        // Eventos de teclado
+        window.addEventListener('keydown', (e) => { if (game.keys.hasOwnProperty(e.key)) game.keys[e.key] = true; });
+        window.addEventListener('keyup', (e) => { if (game.keys.hasOwnProperty(e.key)) game.keys[e.key] = false; });
+
+        // Evento de clic para disparar
+        canvas.addEventListener('click', (e) => {
+            if (game.gameOver || game.victory || game.boss.isExploding || game.isFading) return;
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left; const clickY = e.clientY - rect.top;
+            const angle = Math.atan2(clickY - (game.hero.y + game.hero.height / 2), clickX - (game.hero.x + game.hero.width / 2));
+            game.hero.projectiles.push({
+                x: game.hero.x + game.hero.width / 2, y: game.hero.y + game.hero.height / 2,
+                width: 30, height: 30, speed: 5, angle: angle, image: bookImg
+            });
+        });
+
+        // --- Actualizar barras de salud (incluye texto numérico) ---
+        function updateHealthBars() {
+            const heroFill = document.querySelector('#hero-health .health-fill');
+            const bossFill = document.querySelector('#boss-health .health-fill');
+
+            const currentHeroHealth = Math.max(0, game.hero.health); // No mostrar negativo
+            const currentBossHealth = Math.max(0, game.boss.health); // No mostrar negativo
+
+            const heroPercentage = (currentHeroHealth / game.hero.maxHealth) * 100;
+            const bossPercentage = (currentBossHealth / game.boss.maxHealth) * 100;
+
+            heroFill.style.width = `${heroPercentage}%`;
+            bossFill.style.width = `${bossPercentage}%`;
+
+            // Actualizar texto numérico
+            heroHealthText.innerText = `${currentHeroHealth} / ${game.hero.maxHealth}`;
+            bossHealthText.innerText = `${currentBossHealth} / ${game.boss.maxHealth}`;
+        }
+
+        // Dibujar personajes
+        function drawCharacters() {
+            if (!game.gameOver && heroImg.complete && heroImg.naturalHeight !== 0) {
+                 ctx.drawImage(heroImg, game.hero.x, game.hero.y, game.hero.width, game.hero.height);
+            } else if (!game.gameOver) { ctx.fillStyle = 'green'; ctx.fillRect(game.hero.x, game.hero.y, game.hero.width, game.hero.height); }
+
+            if (game.boss.health > 0 && !game.boss.isExploding) {
+                 if (bossImg.complete && bossImg.naturalHeight !== 0) {
+                    ctx.drawImage(bossImg, game.boss.x, game.boss.y, game.boss.width, game.boss.height);
+                 } else { ctx.fillStyle = 'red'; ctx.fillRect(game.boss.x, game.boss.y, game.boss.width, game.boss.height); }
+             }
+        }
+
+        // Dibujar proyectiles
+        function drawProjectiles() {
+             if (game.isFading || game.victory || game.gameOver) return;
+            game.hero.projectiles.forEach((proj) => {
+                if (proj.image.complete && proj.image.naturalHeight !== 0) { ctx.drawImage(proj.image, proj.x - proj.width / 2, proj.y - proj.height / 2, proj.width, proj.height); }
+                else { ctx.fillStyle = 'blue'; ctx.fillRect(proj.x - proj.width / 2, proj.y - proj.height / 2, proj.width, proj.height); }
+            });
+            game.boss.projectiles.forEach((proj) => {
+                 if (proj.image.complete && proj.image.naturalHeight !== 0) { ctx.drawImage(proj.image, proj.x - proj.width / 2, proj.y - proj.height / 2, proj.width, proj.height); }
+                 else { ctx.fillStyle = 'orange'; ctx.fillRect(proj.x - proj.width / 2, proj.y - proj.height / 2, proj.width, proj.height); }
+            });
+        }
+
+        // Actualizar proyectiles y detectar colisiones
+        function updateProjectiles() {
+             if (game.boss.isExploding || game.isFading || game.victory || game.gameOver) return;
+            // Proyectiles del héroe
+            game.hero.projectiles = game.hero.projectiles.filter(proj => {
+                proj.x += Math.cos(proj.angle) * proj.speed; proj.y += Math.sin(proj.angle) * proj.speed;
+                // Colisión con el jefe
+                 if (game.boss.health > 0 && proj.x < game.boss.x + game.boss.width && proj.x + proj.width > game.boss.x && proj.y < game.boss.y + game.boss.height && proj.y + proj.height > game.boss.y) {
+                    game.boss.health--;
+                    updateHealthBars(); // Actualiza barra y texto
+                    if (game.boss.health <= 0) {
+                        createExplosion(game.boss.x + game.boss.width / 2, game.boss.y + game.boss.height / 2);
+                        game.boss.projectiles = [];
+                    }
+                    return false;
+                }
+                return proj.x > -proj.width && proj.x < canvas.width && proj.y > -proj.height && proj.y < canvas.height;
+            });
+            // Proyectiles del jefe
+            game.boss.projectiles = game.boss.projectiles.filter(proj => {
+                proj.x += Math.cos(proj.angle) * proj.speed; proj.y += Math.sin(proj.angle) * proj.speed;
+                // Colisión con el héroe
+                if (proj.x < game.hero.x + game.hero.width && proj.x + proj.width > game.hero.x && proj.y < game.hero.y + game.hero.height && proj.y + proj.height > game.hero.y) {
+                    game.hero.health--;
+                    updateHealthBars(); // Actualiza barra y texto
+                    if (game.hero.health <= 0) { game.gameOver = true; }
+                    return false;
+                }
+                return proj.x > -proj.width && proj.x < canvas.width && proj.y > -proj.height && proj.y < canvas.height;
+            });
+        }
+
+        // Ataque del jefe
+        function bossAttack(timestamp) {
+             if (game.boss.health <= 0 || game.boss.isExploding || game.isFading || game.victory || game.gameOver) return;
+            if (timestamp - game.boss.attackTimer > game.boss.attackInterval) {
+                game.boss.attackTimer = timestamp;
+                const angle = Math.atan2((game.hero.y + game.hero.height / 2) - (game.boss.y + game.boss.height / 2), (game.hero.x + game.hero.width / 2) - (game.boss.x + game.boss.width / 2));
+                game.boss.projectiles.push({ x: game.boss.x + game.boss.width / 2, y: game.boss.y + game.boss.height / 2, width: 40, height: 40, speed: 3, angle: angle, image: flameImg });
+            }
+        }
+
+        // Movimiento del jefe
+        function updateBossPosition() {
+             if (game.boss.health <= 0 || game.boss.isExploding || game.isFading || game.victory || game.gameOver) return;
+            game.boss.y += game.boss.speed * game.boss.moveDirection;
+            if (game.boss.y <= 0 || game.boss.y + game.boss.height >= canvas.height) {
+                game.boss.moveDirection *= -1; game.boss.y = Math.max(0, Math.min(canvas.height - game.boss.height, game.boss.y));
+            }
+        }
+
+        // Actualizar posición del héroe
+        function updateHeroPosition() {
+            if (game.gameOver || game.victory || game.boss.isExploding || game.isFading) return;
+            if (game.keys.ArrowUp && game.hero.y > 0) game.hero.y -= game.hero.speed;
+            if (game.keys.ArrowDown && game.hero.y < canvas.height - game.hero.height) game.hero.y += game.hero.speed;
+            if (game.keys.ArrowLeft && game.hero.x > 0) game.hero.x -= game.hero.speed;
+            if (game.keys.ArrowRight && game.hero.x < canvas.width - game.hero.width) game.hero.x += game.hero.speed;
+            game.hero.x = Math.max(0, Math.min(canvas.width - game.hero.width, game.hero.x));
+            game.hero.y = Math.max(0, Math.min(canvas.height - game.hero.height, game.hero.y));
+        }
+
+        // Bucle del juego principal
+        function gameLoop(timestamp) {
+             if (!gameReady) { requestAnimationFrame(gameLoop); return; }
+
+             // --- Manejo de Estados Finales ---
+             if (game.gameOver) { document.getElementById('game-over').style.display = 'block'; return; }
+             if (game.victory) { /* Mensaje mostrado por startFadeOut */ return; }
+             if (game.isFading) { requestAnimationFrame(gameLoop); return; } // Necesario para el timeout del fade
+
+             // --- Lógica y Dibujo del Juego Activo ---
+             drawMatrixBackground();
+             if (!game.boss.isExploding) { // Pausa la lógica principal durante la explosión
+                 updateHeroPosition();
+                 updateBossPosition();
+                 updateProjectiles();
+                 bossAttack(timestamp);
+             }
+             drawCharacters();
+             drawProjectiles();
+             updateAndDrawExplosion(); // Dibuja la explosión si está activa
+
+             requestAnimationFrame(gameLoop);
+        }
+
+        // Redimensionar canvas
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initializeMatrix();
+            // Reajustar posiciones al redimensionar para mantenerlos centrados/simétricos
+            game.hero.x = canvas.width / 4;
+            game.hero.y = canvas.height / 2 - game.hero.height / 2;
+            game.boss.x = canvas.width - game.boss.width - (canvas.width / 4);
+            game.boss.y = canvas.height / 2 - game.boss.height / 2;
+            updateHealthBars();
+        });
+    </script>
+</body>
+</html>
