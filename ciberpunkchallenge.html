@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyberpunk Language Challenge</title>
+    <style>
+        body {
+            background-color: #0a0a1a;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 65, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 65, 0.05) 0%, transparent 20%);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 2px solid #00ff41;
+            padding: 20px;
+            box-shadow: 0 0 15px #00ff41;
+            background-color: rgba(0, 0, 20, 0.8);
+        }
+
+        h1 {
+            text-align: center;
+            text-shadow: 0 0 5px #00ff41;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .instruction {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+            color: #00ffcc;
+        }
+
+        .question {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-left: 3px solid #00ff41;
+            background-color: rgba(0, 255, 65, 0.05);
+        }
+
+        .question h3 {
+            margin-top: 0;
+            color: #00ffcc;
+        }
+
+        .answer-box {
+            display: inline-block;
+            margin: 5px;
+        }
+
+        input[type="text"] {
+            background-color: #0a0a1a;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            padding: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            box-shadow: 0 0 8px #00ff41;
+        }
+
+        .hint {
+            font-size: 0.9em;
+            color: #00ff99;
+            margin-top: 10px;
+        }
+
+        .button {
+            background-color: #0a0a1a;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+
+        .button:hover {
+            background-color: #00ff41;
+            color: #0a0a1a;
+            box-shadow: 0 0 15px #00ff41;
+        }
+
+        .ai-tool {
+            background-color: #ff00ff;
+            border-color: #ff00ff;
+            color: #0a0a1a;
+        }
+
+        .ai-tool:hover {
+            background-color: #0a0a1a;
+            color: #ff00ff;
+            box-shadow: 0 0 15px #ff00ff;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .success {
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            background-color: rgba(0, 255, 65, 0.1);
+        }
+
+        .error {
+            color: #ff0033;
+            border: 1px solid #ff0033;
+            background-color: rgba(255, 0, 51, 0.1);
+        }
+
+        .cyberpunk-glitch {
+            animation: glitch 1s linear infinite;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 #00ff41, -2px 0 #ff00ff; }
+            25% { text-shadow: -2px 0 #00ff41, 2px 0 #ff00ff; }
+            50% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ff41; }
+            75% { text-shadow: -2px 0 #ff00ff, 2px 0 #00ff41; }
+            100% { text-shadow: 2px 0 #00ff41, -2px 0 #ff00ff; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="cyberpunk-glitch">LANGUAGE CHALLENGE</h1>
+        
+        <p class="instruction">Escribe la palabra correcta en el cuadro vacío.</p>
+        
+        <button class="button ai-tool" onclick="window.open('https://chatgpt.com/', '_blank')">Ask an AI tool</button>
+        
+        <div class="question">
+            <h3>1- What is the etymological origin of the word 'robot'?</h3>
+            <div class="answer-box">
+                <input type="text" id="answer1" placeholder="Your answer...">
+            </div>
+            <p class="hint">Hint: Comes from a Czech word meaning "forced labor"</p>
+        </div>
+        
+        <div class="question">
+            <h3>2- What’s the difference between: ‘Can I leave early?’ and ‘Can I speak French?’? Why does ‘can’ cause ambiguity here?</h3>
+            <p>Can I leave early? = Pide <input type="text" id="answer2a" placeholder="Your answer..."></p>
+            <p>Can I speak French? = Pregunta sobre <input type="text" id="answer2b" placeholder="Your answer..."> </p>
+            <p>Para evitar confusiones, en inglés formal se usa "May I…?" para pedir <input type="text" id="answer2c" placeholder="Your answer..."> </p>
+        </div>
+        
+        <button class="button" onclick="checkAnswers()">CHECK ANSWERS</button>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function checkAnswers() {
+            // Correct answers
+            const correctAnswers = {
+                answer1: "robota",
+                answer2a: "permiso",
+                answer2b: "habilidad",
+                answer2c: "permiso"
+            };
+
+            // User answers
+            const userAnswers = {
+                answer1: document.getElementById("answer1").value.trim().toLowerCase(),
+                answer2a: document.getElementById("answer2a").value.trim().toLowerCase(),
+                answer2b: document.getElementById("answer2b").value.trim().toLowerCase(),
+                answer2c: document.getElementById("answer2c").value.trim().toLowerCase()
+            };
+
+            // Check answers
+            let allCorrect = true;
+            for (const key in correctAnswers) {
+                if (userAnswers[key] !== correctAnswers[key]) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+
+            // Show result
+            const resultDiv = document.getElementById("result");
+            if (allCorrect) {
+                resultDiv.className = "result success";
+                resultDiv.innerHTML = "GOOD JOB! <span style='font-size:1.5em'>👾</span> All answers are correct!";
+                resultDiv.style.display = "block";
+            } else {
+                resultDiv.className = "result error";
+                resultDiv.innerHTML = "Some answers are incorrect. Try again or use the AI tool for help!";
+                resultDiv.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
