@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grammar Prompt Challenge v1 - GIM Size & Shake Effect</title>
+    <style>
+        /* CSS Styles (igual que antes) */
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+        #game-container {
+            position: relative;
+            width: 1280px;
+            height: 720px;
+            overflow: hidden;
+            border: 3px solid #6a0dad;
+            box-shadow: 0 0 25px #9d4edd;
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+        }
+        #video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 0.6;
+        }
+        #questionUI {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 0, 30, 0.92);
+            padding: 35px;
+            border: 4px solid #9d4edd;
+            color: white;
+            text-align: center;
+            display: none;
+            z-index: 10;
+            border-radius: 20px;
+            width: 700px; /* Slightly wider for potentially longer prompts */
+            box-shadow: 0 0 30px #c77dff;
+            font-size: 1.1em;
+        }
+        #questionText {
+             margin-bottom: 20px;
+             font-size: 1.3em;
+             text-shadow: 0 0 8px #fff;
+        }
+        #options button {
+            display: block; /* Make buttons stack vertically */
+            width: 90%; /* Take up most of the width */
+            margin: 10px auto; /* Center buttons with vertical margin */
+            padding: 12px 20px;
+            cursor: pointer;
+            background: linear-gradient(145deg, #7b2cbf, #5a189a);
+            color: white;
+            border: 2px solid #c77dff;
+            border-radius: 10px;
+            font-size: 17px; /* Slightly smaller for potentially longer text */
+            transition: all 0.25s ease-out;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            text-align: left; /* Align text to the left */
+        }
+        #options button:hover {
+            background: linear-gradient(145deg, #9d4edd, #7b2cbf);
+            transform: scale(1.03); /* Simplified hover effect */
+            box-shadow: 0 6px 15px rgba(157, 78, 221, 0.6);
+            border-color: #fff;
+        }
+        #restartButton {
+            position: absolute;
+            top: 72%; /* Adjusted position slightly lower */
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            z-index: 11;
+            font-size: 28px;
+            padding: 18px 35px;
+            background: linear-gradient(145deg, #ff5500, #cc3300);
+            color: white;
+            border: 3px solid #ff8c66;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.7);
+             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+         #restartButton:hover {
+             background: linear-gradient(145deg, #ff8c66, #ff5500);
+             transform: translateX(-50%) scale(1.05);
+             box-shadow: 0 8px 20px rgba(255, 85, 0, 0.6);
+             border-color: #fff;
+         }
+        #finalQuestionDesc { /* Renamed from finalQuestion */
+            font-size: 22px; /* Adjusted size */
+            color: #ffcc00;
+            text-shadow: 0 0 12px #ff9900;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+         #progressText { /* Element for showing progress */
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 24px; /* Slightly larger */
+            font-weight: bold;
+            z-index: 5;
+            text-shadow: 2px 2px 4px black; /* More pronounced shadow */
+         }
+        .alien-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle, rgba(106,13,173,0.2) 0%, rgba(0,0,0,0) 75%);
+            z-index: 0;
+            pointer-events: none;
+            animation: pulse 5s infinite alternate;
+        }
+        @keyframes pulse {
+            from { opacity: 0.5; }
+            to { opacity: 0.8; }
+        }
+        .screen-shake {
+            animation: shake 0.3s linear;
+        }
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+          20%, 40%, 60%, 80% { transform: translateX(8px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="progressText"></div> <div class="alien-effect"></div>
+        <video id="video-background" loop muted autoplay playsinline>
+            <source src="https://ecwatforcanvas.github.io/Glitchpre/backgroundvid.mp4" type="video/mp4">
+             Tu navegador no soporta la etiqueta de video.
+        </video>
+        <canvas id="gameCanvas"></canvas>
+        <div id="questionUI">
+            <h2 id="questionText"></h2>
+             <div id="finalQuestionDesc" style="display: none;"></div> <div id="options"></div>
+        </div>
+        <button id="restartButton">JUGAR OTRA VEZ</button>
+    </div>
+
+    <script>
+        // --- Game Setup ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gameContainer = document.getElementById('game-container');
+        canvas.width = gameContainer.clientWidth;
+        canvas.height = gameContainer.clientHeight;
+
+        // --- UI Elements ---
+        const restartButton = document.getElementById('restartButton');
+        const questionUI = document.getElementById('questionUI');
+        const questionTextEl = document.getElementById('questionText');
+        const optionsDiv = document.getElementById('options');
+        const finalQuestionDescEl = document.getElementById('finalQuestionDesc');
+        const progressTextEl = document.getElementById('progressText');
+
+        // --- Background Video ---
+        const backgroundVideo = document.getElementById('video-background');
+        backgroundVideo.play().catch(e => console.warn("Autoplay prevented:", e));
+
+        // --- Image Loading ---
+        let imagesLoaded = 0;
+        const totalImages = 2;
+        function imageLoaded() {
+            imagesLoaded++;
+            if (imagesLoaded === totalImages) startGame();
+        }
+        const playerImg = new Image();
+        playerImg.src = 'https://ecwatforcanvas.github.io/Images/Student.png';
+        playerImg.onload = imageLoaded;
+        playerImg.onerror = () => console.error("Failed to load player image.");
+        const bossImg = new Image();
+        bossImg.src = 'https://ecwatforcanvas.github.io/Glitchpre/GIM-transparency.png';
+        bossImg.onload = imageLoaded;
+        bossImg.onerror = () => console.error("Failed to load boss image.");
+
+        // --- Game State ---
+        let particles = [];
+        let victory = false;
+        let gameOver = false;
+        let currentQuestion = null;
+        let score = 0;
+        let animationFrameId = null;
+        let gamePaused = false;
+        let victorySequenceActive = false;
+        let playerShakeX = 0; // Player shake offset X
+        let playerShakeY = 0; // Player shake offset Y
+
+        // ** Gameplay State Variables **
+        let grammarQuestionsAnswered = 0;
+        const neededGrammarAnswers = 12;
+        let finalQuestionUnlocked = false;
+        let inRetryLoop = false;
+        let retryQuestionsAnswered = 0;
+        const neededRetryAnswers = 4;
+
+        // --- Player ---
+        const player = {
+            x: canvas.width / 2 - 45,
+            y: canvas.height - 150,
+            width: 90,
+            height: 90,
+            speed: 7,
+            shootTimer: 0,
+            shootDelay: 12,
+            autoShoot: true,
+            initialWidth: 90,
+            initialHeight: 90
+        };
+
+        // --- Projectiles ---
+        let playerBullets = [];
+        let enemyBullets = [];
+
+        // --- Boss (GIM - Visual Only) ---
+        const boss = {
+            // *** GIM SIZE INCREASED ***
+            width: 240,
+            height: 240,
+            // *** POSITION ADJUSTED FOR NEW SIZE ***
+            initialX: canvas.width / 2 - 120, // Centered: canvas_width / 2 - new_width / 2
+            initialY: 80, // Slightly higher
+            x: canvas.width / 2 - 120,
+            y: 80,
+            attackTimer: 0,
+            attackDelay: 70,
+        };
+
+        // --- Grammar Questions (Pool) ---
+        const grammarQuestions = [ /* ... (lista igual que antes) ... */
+             { question: "Which sentence correctly uses 'can' for ability?", options: ["He can to run fast.", "She cans play the piano.", "They can speak French.", "I can am strong."], answer: 2, topic: "Can" },
+             { question: "Complete: You ___ finish your homework before watching TV.", options: ["has to", "have to", "must to", "haves to"], answer: 1, topic: "Have to" },
+             { question: "What is the past tense of 'walk'?", options: ["walkd", "walked", "did walk", "woke"], answer: 1, topic: "Past Tense Regular" },
+             { question: "What is the past tense of 'go'?", options: ["goed", "gone", "went", "did go"], answer: 2, topic: "Past Tense Irregular" },
+             { question: "Complete: I ___ tired yesterday.", options: ["were", "be", "was", "am"], answer: 2, topic: "Past of Be" },
+             { question: "For advice: 'You ___ see a doctor.'", options: ["could to", "should", "can", "must to"], answer: 1, topic: "Should/Could" },
+             { question: "Complete: This book is ___ than the movie.", options: ["gooder", "more better", "best", "better"], answer: 3, topic: "Comparative Adjectives" },
+             { question: "Complete: She gave the present to ___ (he).", options: ["he", "his", "him", "himself"], answer: 2, topic: "Object Pronouns" },
+             { question: "Complete: The cat ___ on the sofa.", options: ["sleep", "sleeps", "is sleep", "sleeping"], answer: 1, topic: "Present Tense" },
+             { question: "Complete: Look! The birds ___.", options: ["fly", "are flying", "flies", "is flying"], answer: 1, topic: "Present Continuous" },
+             { question: "Which verb is REGULAR in the past tense?", options: ["eat", "see", "play", "take"], answer: 2, topic: "Regular Verbs" },
+             { question: "Which verb is IRREGULAR in the past tense?", options: ["ask", "work", "live", "write"], answer: 3, topic: "Irregular Verbs" }
+        ];
+        let availableGrammarQuestions = [...grammarQuestions];
+
+        // --- Final Prompt Question ---
+        const finalPromptQuestion = { /* ... (igual que antes) ... */
+            question: "FINAL PROMPT CHALLENGE!",
+            description: "Select the BEST prompt to ask an AI (like me!) to explain the usage of 'can' for ability:",
+            options: [
+                "1. can explain ability?",
+                "2. Tell me about can.",
+                "3. How use can for ability thx",
+                "4. Explain how to use the modal verb 'can' to express ability in the present tense, providing clear examples.",
+                "5. can can can ability explain"
+            ],
+            answer: 3
+        };
+
+        // --- Game Functions ---
+
+        // Controls
+        const keys = { ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false };
+        window.addEventListener('keydown', (e) => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
+        window.addEventListener('keyup', (e) => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
+        restartButton.addEventListener('click', restartGame);
+
+        // Player Shoot
+        function playerShoot() { /* ... (igual que antes) ... */
+             playerBullets.push({
+                x: player.x + player.width / 2, y: player.y, radius: 8, speed: 14,
+                color: '#00FFFF', glow: true, glowColor: '#00FFFF'
+            });
+        }
+
+        // Show Question UI
+        function showQuestion(questionObj) { /* ... (igual que antes) ... */
+             currentQuestion = questionObj;
+            const isFinal = questionObj === finalPromptQuestion;
+            questionTextEl.textContent = questionObj.question;
+            if (isFinal) {
+                finalQuestionDescEl.style.display = 'block';
+                finalQuestionDescEl.textContent = questionObj.description;
+            } else {
+                finalQuestionDescEl.style.display = 'none';
+            }
+            optionsDiv.innerHTML = '';
+            questionObj.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.textContent = option.replace(/^\d+\.\s*/, '');
+                button.onclick = () => checkAnswer(index, questionObj);
+                optionsDiv.appendChild(button);
+            });
+            questionUI.style.display = 'block';
+            pauseGame();
+        }
+
+        // Check Answer Logic
+        function checkAnswer(selectedIndex, questionObj) { /* ... (lógica igual que antes) ... */
+            const isFinal = questionObj === finalPromptQuestion;
+            const correctAnswerIndex = questionObj.answer;
+            questionUI.style.display = 'none';
+            currentQuestion = null;
+            if (selectedIndex === correctAnswerIndex) {
+                if (!isFinal) {
+                    score += 10;
+                    createHitParticles(player.x + player.width / 2, player.y, 25, '#00FF00');
+                    if (inRetryLoop) { retryQuestionsAnswered++; } else if (!finalQuestionUnlocked) { grammarQuestionsAnswered++; }
+                    const questionIndex = availableGrammarQuestions.findIndex(q => q.question === questionObj.question);
+                    if (questionIndex > -1) availableGrammarQuestions.splice(questionIndex, 1);
+                    if (availableGrammarQuestions.length === 0) availableGrammarQuestions = [...grammarQuestions];
+                    resumeGame();
+                } else {
+                    console.log("Final prompt question correct! Starting victory sequence...");
+                    startVictorySequence();
+                }
+            } else {
+                if (!isFinal) {
+                    player.width = Math.max(40, player.width - 15);
+                    player.height = Math.max(40, player.height - 15);
+                    triggerScreenEffect('rgba(255, 0, 0, 0.4)', 150);
+                    createHitParticles(player.x + player.width / 2, player.y + player.height / 2, 15, '#FF0000');
+                    if (player.width <= 40) { gameOver = true; victory = false; }
+                    resumeGame();
+                } else {
+                    console.log("Final prompt question incorrect. Entering retry loop.");
+                    inRetryLoop = true;
+                    retryQuestionsAnswered = 0;
+                    finalQuestionUnlocked = false;
+                    triggerScreenEffect('rgba(150, 0, 255, 0.5)', 300);
+                    createHitParticles(boss.x + boss.width / 2, boss.y + boss.height / 2, 40, '#AA00FF');
+                    resumeGame();
+                }
+            }
+        }
+
+        // Create Enemy Bullets
+        function createEnemyBullets() { /* ... (igual que antes) ... */
+             const bulletCount = 8;
+             const bulletSpeed = 4;
+             const bulletSize = 15;
+             const bulletColor = '#FF8000';
+             const glowColor = '#FF8000';
+             for (let i = 0; i < bulletCount; i++) {
+                 const angle = (Math.PI * 2) * (i / bulletCount) + (Math.random() - 0.5) * 0.5;
+                 enemyBullets.push({
+                     x: boss.x + boss.width / 2, y: boss.y + boss.height / 2,
+                     radius: bulletSize, speed: bulletSpeed + (Math.random() - 0.5),
+                     color: bulletColor, dx: Math.cos(angle), dy: Math.sin(angle),
+                     glow: true, glowColor: glowColor
+                 });
+             }
+         }
+
+        // Start Victory Sequence
+        function startVictorySequence() { /* ... (igual que antes) ... */
+            if (victorySequenceActive) return;
+            victorySequenceActive = true;
+            console.log("Victory sequence started.");
+            triggerBossExplosion();
+            const explosionDuration = 1800;
+            setTimeout(() => {
+                console.log("Explosion finished. Setting victory state.");
+                victory = true;
+                gameOver = true;
+                victorySequenceActive = false;
+            }, explosionDuration);
+        }
+
+
+        // Trigger Boss Explosion (Visuals ONLY)
+         function triggerBossExplosion() { /* ... (igual que antes) ... */
+             console.log("Triggering boss explosion effect...");
+             const explosionParticles = 350;
+             const explosionColors = ['#00FF00', '#FFFF00', '#00FFFF', '#FFFFFF', '#90EE90'];
+             for (let i = 0; i < explosionParticles; i++) {
+                 const angle = Math.random() * Math.PI * 2;
+                 const speed = Math.random() * 15 + 5;
+                 const life = Math.random() * 80 + 40;
+                 particles.push({
+                     x: boss.x + boss.width / 2, y: boss.y + boss.height / 2,
+                     radius: Math.random() * 12 + 4,
+                     color: explosionColors[Math.floor(Math.random() * explosionColors.length)],
+                     speedX: Math.cos(angle) * speed * (Math.random() + 0.5),
+                     speedY: Math.sin(angle) * speed * (Math.random() + 0.5),
+                     life: life, initialLife: life, friction: 0.97
+                 });
+             }
+             triggerScreenShake(500);
+              boss.width = 0;
+              boss.height = 0;
+         }
+
+        // Create Hit Particles
+        function createHitParticles(x, y, count, color) { /* ... (igual que antes) ... */
+             for (let i = 0; i < count; i++) {
+                const life = Math.random() * 30 + 10;
+                particles.push({
+                    x: x, y: y, radius: Math.random() * 4 + 1, color: color,
+                    speedX: (Math.random() - 0.5) * 8, speedY: (Math.random() - 0.5) * 8,
+                    life: life, initialLife: life, friction: 0.95
+                });
+            }
+        }
+
+        // Update Particles
+         function updateParticles() { /* ... (igual que antes) ... */
+             for (let i = particles.length - 1; i >= 0; i--) {
+                 const p = particles[i];
+                 p.x += p.speedX; p.y += p.speedY; p.life--;
+                 if (p.friction) { p.speedX *= p.friction; p.speedY *= p.friction; }
+                 p.radius *= 0.98;
+                 if (p.life <= 0 || p.radius < 0.5) particles.splice(i, 1);
+             }
+         }
+
+        // Screen Effects
+        function triggerScreenEffect(color, duration) { /* ... (igual que antes) ... */
+            const effectDiv = document.createElement('div');
+             effectDiv.style.position = 'absolute';
+             effectDiv.style.top = '0';
+             effectDiv.style.left = '0';
+             effectDiv.style.width = '100%';
+             effectDiv.style.height = '100%';
+             effectDiv.style.backgroundColor = color;
+             effectDiv.style.zIndex = '5';
+             effectDiv.style.opacity = '1';
+             effectDiv.style.transition = `opacity ${duration}ms ease-out`;
+             gameContainer.appendChild(effectDiv);
+             setTimeout(() => {
+                 effectDiv.style.opacity = '0';
+                 setTimeout(() => {
+                     if (gameContainer.contains(effectDiv)) {
+                          gameContainer.removeChild(effectDiv);
+                     }
+                 }, duration);
+             }, 50);
+        }
+        function triggerScreenShake(duration) { /* ... (igual que antes) ... */
+              gameContainer.classList.add('screen-shake');
+             setTimeout(() => { gameContainer.classList.remove('screen-shake'); }, duration);
+         }
+
+        // Pause/Resume Game
+        function pauseGame() { if (!gamePaused) { gamePaused = true; console.log("Game paused"); } }
+        function resumeGame() { if (gamePaused) { gamePaused = false; console.log("Game resumed"); if (!gameOver && animationFrameId === null) { requestAnimationFrame(gameLoop); } } }
+
+        // Restart Game
+        function restartGame() { /* ... (igual que antes, reseteando GIM al nuevo tamaño/posición) ... */
+            console.log("Restarting game...");
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+
+            playerBullets = []; enemyBullets = []; particles = [];
+            score = 0; correctAnswers = 0;
+            gameOver = false; victory = false;
+            gamePaused = false; currentQuestion = null;
+            victorySequenceActive = false;
+            playerShakeX = 0; playerShakeY = 0; // Reset shake
+
+            grammarQuestionsAnswered = 0;
+            finalQuestionUnlocked = false;
+            inRetryLoop = false;
+            retryQuestionsAnswered = 0;
+            availableGrammarQuestions = [...grammarQuestions];
+
+            player.x = canvas.width / 2 - player.initialWidth / 2;
+            player.y = canvas.height - 150;
+            player.width = player.initialWidth;
+            player.height = player.initialHeight;
+            player.shootTimer = 0;
+
+            // Reset boss to new size/position
+            boss.width = 240;
+            boss.height = 240;
+            boss.initialX = canvas.width / 2 - 120;
+            boss.initialY = 80;
+            boss.x = boss.initialX;
+            boss.y = boss.initialY;
+            boss.attackTimer = 0;
+            boss.attackDelay = 70;
+
+            restartButton.style.display = 'none';
+            questionUI.style.display = 'none';
+            finalQuestionDescEl.style.display = 'none';
+            progressTextEl.textContent = `${grammarQuestionsAnswered}/${neededGrammarAnswers}`;
+
+            startGame();
+        }
+
+        // --- Update Function (Main Game Logic) ---
+        function update() {
+            if (gameOver || gamePaused || imagesLoaded < totalImages || victorySequenceActive) return;
+
+            // --- Player Movement ---
+            if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
+            if (keys.ArrowRight && player.x < canvas.width - player.width) player.x += player.speed;
+            if (keys.ArrowUp && player.y > 0) player.y -= player.speed;
+            if (keys.ArrowDown && player.y < canvas.height - player.height) player.y += player.speed;
+
+            // --- Player Shooting (Visual) ---
+            if (player.autoShoot) { /* ... */
+                 player.shootTimer++;
+                if (player.shootTimer >= player.shootDelay) {
+                    playerShoot();
+                    player.shootTimer = 0;
+                }
+            }
+
+            // --- Boss Attack & Movement ---
+            const horizontalMovementRange = 100; // Max distance GIM moves from center
+            boss.x = boss.initialX + Math.sin(Date.now() / 1800) * horizontalMovementRange; // Slower movement
+            boss.attackTimer++;
+            if (boss.attackTimer >= boss.attackDelay) {
+                createEnemyBullets();
+                boss.attackTimer = 0;
+            }
+
+            // --- Calculate Player Shake based on GIM Movement ---
+            const gimDisplacement = boss.x - boss.initialX;
+            // Normalize displacement: value between 0 and 1 approx
+            const shakeIntensity = Math.min(1, Math.abs(gimDisplacement) / horizontalMovementRange);
+            // Max shake offset in pixels
+            const maxShake = 4; // Adjust for more/less shake
+            // Apply random shake based on intensity
+            playerShakeX = (Math.random() - 0.5) * maxShake * shakeIntensity;
+            playerShakeY = (Math.random() - 0.5) * maxShake * shakeIntensity;
+
+
+            // --- Update Player Bullets ---
+             for (let i = playerBullets.length - 1; i >= 0; i--) { /* ... */
+                const bullet = playerBullets[i];
+                 bullet.y -= bullet.speed;
+                 if (boss.width > 0 &&
+                     bullet.x > boss.x && bullet.x < boss.x + boss.width &&
+                     bullet.y < boss.y + boss.height && bullet.y > boss.y)
+                 {
+                     playerBullets.splice(i, 1);
+                     createHitParticles(bullet.x, bullet.y, 5, '#00FFFF');
+                     continue;
+                 }
+                 if (bullet.y < -bullet.radius) playerBullets.splice(i, 1);
+             }
+
+
+            // --- Update Enemy Bullets ---
+            for (let i = enemyBullets.length - 1; i >= 0; i--) { /* ... */
+                 const bullet = enemyBullets[i];
+                bullet.x += bullet.dx * bullet.speed;
+                bullet.y += bullet.dy * bullet.speed;
+                const playerCenterX = player.x + player.width / 2;
+                const playerCenterY = player.y + player.height / 2;
+                const distance = Math.sqrt(Math.pow(bullet.x - playerCenterX, 2) + Math.pow(bullet.y - playerCenterY, 2));
+                const playerEffectiveRadius = (player.width + player.height) / 4;
+                if (distance < bullet.radius + playerEffectiveRadius) {
+                    enemyBullets.splice(i, 1);
+                    if (!currentQuestion && availableGrammarQuestions.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * availableGrammarQuestions.length);
+                        const questionToAsk = availableGrammarQuestions[randomIndex];
+                        showQuestion(questionToAsk);
+                    } else {
+                         createHitParticles(playerCenterX, playerCenterY, 5, '#FFA500');
+                    }
+                    continue;
+                }
+                if (bullet.x < -50 || bullet.x > canvas.width + 50 || bullet.y < -50 || bullet.y > canvas.height + 50) {
+                    enemyBullets.splice(i, 1);
+                }
+            }
+
+            // --- Update Particles ---
+            updateParticles();
+
+            // --- Check for Final Question Unlock ---
+            if (!victorySequenceActive) { /* ... */
+                if (grammarQuestionsAnswered >= neededGrammarAnswers && !finalQuestionUnlocked && !inRetryLoop) {
+                    console.log("Initial 12 grammar questions answered. Unlocking final prompt question.");
+                    finalQuestionUnlocked = true;
+                    showQuestion(finalPromptQuestion);
+                }
+                else if (inRetryLoop && retryQuestionsAnswered >= neededRetryAnswers) {
+                     console.log("4 retry questions answered. Re-presenting final prompt question.");
+                     inRetryLoop = false;
+                     retryQuestionsAnswered = 0;
+                     showQuestion(finalPromptQuestion);
+                 }
+            }
+
+
+            // --- Update Progress Text ---
+             if (inRetryLoop) {
+                 progressTextEl.textContent = `${retryQuestionsAnswered}/${neededRetryAnswers} (Reintentar)`;
+             } else if (!finalQuestionUnlocked) {
+                 progressTextEl.textContent = `${grammarQuestionsAnswered}/${neededGrammarAnswers}`;
+             } else if (finalQuestionUnlocked && !currentQuestion && !victorySequenceActive) {
+                  progressTextEl.textContent = "¡PREGUNTA FINAL!";
+             } else if (currentQuestion === finalPromptQuestion) {
+                  progressTextEl.textContent = "¡DESAFÍO FINAL!";
+             } else if (victorySequenceActive) {
+                 progressTextEl.textContent = "¡DESTRUYENDO!";
+             }
+
+        }
+
+        // --- Draw Function ---
+        function draw() {
+            if (imagesLoaded < totalImages) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // --- Draw GIM (Boss) ---
+            if (boss.width > 0) {
+                ctx.drawImage(bossImg, boss.x, boss.y, boss.width, boss.height);
+            }
+
+            // --- Draw Player (with shake effect) ---
+            // Apply shake offset only when drawing
+            ctx.drawImage(playerImg, player.x + playerShakeX, player.y + playerShakeY, player.width, player.height);
+
+            // --- Draw Bullets ---
+            playerBullets.forEach(bullet => drawWithGlow(bullet.x, bullet.y, bullet.radius, bullet.color, bullet.glowColor || bullet.color, 10));
+            enemyBullets.forEach(bullet => drawWithGlow(bullet.x, bullet.y, bullet.radius, bullet.color, bullet.glowColor || bullet.color, 12));
+
+            // --- Draw Particles ---
+            particles.forEach(particle => { /* ... */
+                 ctx.fillStyle = particle.color;
+                 const initial = particle.initialLife || 60;
+                 ctx.globalAlpha = Math.max(0, particle.life / initial);
+                 ctx.beginPath();
+                 ctx.arc(particle.x, particle.y, Math.max(0, particle.radius), 0, Math.PI * 2);
+                 ctx.fill();
+                 ctx.globalAlpha = 1.0;
+            });
+
+            // --- Draw Score (Optional) ---
+            ctx.fillStyle = 'white';
+            ctx.font = '22px Arial';
+            ctx.textAlign = 'right';
+            ctx.fillText(`Puntaje: ${score}`, canvas.width - 20, 45);
+
+            // --- Draw Game Over/Victory Messages ---
+            if (gameOver) { /* ... (código igual que antes) ... */
+                 ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+                 ctx.fillRect(canvas.width / 2 - 350, canvas.height / 2 - 120, 700, 240);
+                 ctx.strokeStyle = victory ? '#00FF00' : '#FF0000';
+                 ctx.lineWidth = 4;
+                 ctx.strokeRect(canvas.width / 2 - 350, canvas.height / 2 - 120, 700, 240);
+                 ctx.fillStyle = victory ? '#33FF33' : '#FF3333';
+                 ctx.font = 'bold 60px Arial';
+                 ctx.textAlign = 'center';
+                 ctx.shadowColor = victory ? '#008000' : '#800000';
+                 ctx.shadowBlur = 10;
+                 ctx.fillText(victory ? '¡VICTORIA!' : 'GAME OVER', canvas.width / 2, canvas.height / 2 - 50);
+                 ctx.shadowBlur = 0;
+                 ctx.fillStyle = 'white';
+                 ctx.font = '28px Arial';
+                 if (victory) {
+                     ctx.fillText(`¡Prompt Dominado! Puntaje: ${score}`, canvas.width / 2, canvas.height / 2 + 10);
+                     ctx.font = '24px Consolas, "Courier New", monospace';
+                     ctx.fillStyle = '#FFFF00';
+                     ctx.fillText("The password is: can of soda", canvas.width / 2, canvas.height / 2 + 60);
+                 } else {
+                     ctx.fillText('Sobrecarga Gramatical...', canvas.width / 2, canvas.height / 2 + 10);
+                 }
+                 restartButton.style.display = 'block';
+            }
+        }
+
+        // Draw with Glow Helper
+        function drawWithGlow(x, y, radius, color, glowColor = color, blur = 15) { /* ... (igual que antes) ... */
+             ctx.shadowColor = glowColor; ctx.shadowBlur = blur; ctx.fillStyle = color;
+             ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
+             ctx.shadowBlur = 0;
+        }
+
+        // --- Game Loop ---
+        function gameLoop(timestamp) { /* ... (igual que antes) ... */
+            if (gameOver && !victorySequenceActive) {
+                draw();
+                animationFrameId = null;
+                console.log("Game Over state reached. Stopping game loop.");
+                return;
+            }
+            if (!gamePaused) { update(); }
+            draw();
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        // --- Start Game ---
+        function startGame() { /* ... (igual que antes) ... */
+              console.log("startGame function called.");
+             if (imagesLoaded === totalImages) {
+                 if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                 progressTextEl.textContent = `${grammarQuestionsAnswered}/${neededGrammarAnswers}`;
+                 console.log("Initiating game loop.");
+                 animationFrameId = requestAnimationFrame(gameLoop);
+             } else {
+                 console.warn("Attempted to start game before images loaded.");
+             }
+         }
+
+         // Resize Handling
+         window.addEventListener('resize', () => { /* ... (igual que antes) ... */
+              canvas.width = gameContainer.clientWidth; canvas.height = gameContainer.clientHeight;
+             player.x = Math.min(player.x, canvas.width - player.width);
+             player.y = Math.min(player.y, canvas.height - player.height);
+             // Recalcular posición inicial del jefe al redimensionar
+             boss.initialX = canvas.width / 2 - boss.width / 2;
+             // Ajustar posición actual si es necesario (aunque el movimiento la sobreescribe)
+             boss.x = Math.min(boss.x, canvas.width - boss.width);
+             if (!gameOver && imagesLoaded === totalImages) draw();
+         });
+
+    </script>
+</body>
+</html>
