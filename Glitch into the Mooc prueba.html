@@ -573,6 +573,29 @@
             display: none;
         }
 
+                /* Estilos para la pantalla 19 (password) */
+        #screen19 input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            background: #111;
+            color: #0ff;
+            border: 2px solid #0ff;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        #screen19 input[type="password"]:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 255, 234, 0.9);
+        }
+
+        #passwordError {
+            color: #ff5555;
+            margin-top: 15px;
+            display: none;
+        }
+
         /* Estilos para pantalla 10 (grammar challenge) */
         .grammar-question {
             background: rgba(0, 20, 30, 0.7);
@@ -822,7 +845,27 @@
         if (password === "robota") {
             passwordCorrect = true;
             clearInterval(countdownInterval);
-            changeScreen('screen16');
+            changeScreen('screen19');
+        } else {
+            passwordError.style.display = "block";
+            passwordInput.classList.add('shake');
+            setTimeout(() => {
+                passwordInput.classList.remove('shake');
+            }, 500);
+            passwordInput.value = "";
+        }
+    }
+
+    // Para la tercera contraseña ("can of soda")
+    function checkPassword3() {
+        const passwordInput = document.getElementById("passwordInput3");
+        const password = passwordInput.value;
+        const passwordError = document.getElementById("passwordError3");
+
+        if (password === "can of soda") {
+            passwordCorrect = true;
+            clearInterval(countdownInterval);
+            changeScreen('screen14');
         } else {
             passwordError.style.display = "block";
             passwordInput.classList.add('shake');
@@ -1004,7 +1047,7 @@
                         object-fit: contain;">
         </div>
         <button onclick="changeScreen('screen3')">INITIATE SEQUENCE</button>
-        <button onclick="changeScreen('screen12')">RETRY</button>
+        <button onclick="changeScreen('screen12')">ENDGAME PORTAL</button>
         <audio autoplay controls loop>
         <source src="https://ecwatforcanvas.github.io/Glitchpre/BigRedButton.mp3" type="audio/mpeg">
         Tu navegador no soporta la reproducción de audio.
@@ -1409,6 +1452,41 @@
                     Wrong password! Try again...
                 </p>
 </div>
+    </div>
+    <div id="screen19" class="screen">
+         <div class="matrix-code"></div>
+<div style="
+  width: 100% !important;
+  height: 900px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+">
+  <iframe 
+    src="https://ecwatforcanvas.github.io/Glitchpre/defeat%20Gim%20game.html" 
+    style="
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 900px !important;
+      border: none !important;
+      overflow: hidden !important;
+    "
+    frameborder="0"
+    scrolling="no"
+  ></iframe>
+</div>
+
+<div style="margin: 30px auto; max-width: 400px;">
+    <input type="password" id="passwordInput3" placeholder="Type the password...">
+    <button onclick="checkPassword3()" style="...">GET OUT OF MY PC!</button>
+                <p id="passwordError3" style="color: #ff5555; margin-top: 15px; display: none;">
+                    Wrong password! Try again...
+                </p>
+</div>
+    </div>
     </div>
     <script>
         // Initial screen load
