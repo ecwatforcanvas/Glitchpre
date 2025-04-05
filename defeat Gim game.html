@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Grammar Prompt Challenge v1 - GIM Size & Shake Effect</title>
+    <title>Grammar Prompt Challenge v1 - Final Tweaks</title>
     <style>
         /* CSS Styles (igual que antes) */
         body {
@@ -13,6 +13,7 @@
             align-items: center;
             height: 100vh;
             font-family: 'Arial', sans-serif;
+            cursor: none; /* Hide default cursor over game */
         }
         #game-container {
             position: relative;
@@ -21,6 +22,7 @@
             overflow: hidden;
             border: 3px solid #6a0dad;
             box-shadow: 0 0 25px #9d4edd;
+            cursor: none; /* Hide cursor when over container */
         }
         canvas {
             display: block;
@@ -30,6 +32,7 @@
             z-index: 1;
             width: 100%;
             height: 100%;
+             cursor: none; /* Hide cursor when over canvas */
         }
         #video-background {
             position: absolute;
@@ -54,9 +57,10 @@
             display: none;
             z-index: 10;
             border-radius: 20px;
-            width: 700px; /* Slightly wider for potentially longer prompts */
+            width: 700px;
             box-shadow: 0 0 30px #c77dff;
             font-size: 1.1em;
+            cursor: default; /* Show cursor over questions */
         }
         #questionText {
              margin-bottom: 20px;
@@ -64,29 +68,29 @@
              text-shadow: 0 0 8px #fff;
         }
         #options button {
-            display: block; /* Make buttons stack vertically */
-            width: 90%; /* Take up most of the width */
-            margin: 10px auto; /* Center buttons with vertical margin */
+            display: block;
+            width: 90%;
+            margin: 10px auto;
             padding: 12px 20px;
-            cursor: pointer;
+            cursor: pointer; /* Pointer cursor for buttons */
             background: linear-gradient(145deg, #7b2cbf, #5a189a);
             color: white;
             border: 2px solid #c77dff;
             border-radius: 10px;
-            font-size: 17px; /* Slightly smaller for potentially longer text */
+            font-size: 17px;
             transition: all 0.25s ease-out;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-            text-align: left; /* Align text to the left */
+            text-align: left;
         }
         #options button:hover {
             background: linear-gradient(145deg, #9d4edd, #7b2cbf);
-            transform: scale(1.03); /* Simplified hover effect */
+            transform: scale(1.03);
             box-shadow: 0 6px 15px rgba(157, 78, 221, 0.6);
             border-color: #fff;
         }
         #restartButton {
             position: absolute;
-            top: 72%; /* Adjusted position slightly lower */
+            top: 72%;
             left: 50%;
             transform: translateX(-50%);
             display: none;
@@ -97,7 +101,7 @@
             color: white;
             border: 3px solid #ff8c66;
             border-radius: 12px;
-            cursor: pointer;
+            cursor: pointer; /* Pointer cursor for restart */
             transition: all 0.3s ease;
             text-shadow: 0 2px 5px rgba(0,0,0,0.7);
              box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
@@ -108,22 +112,22 @@
              box-shadow: 0 8px 20px rgba(255, 85, 0, 0.6);
              border-color: #fff;
          }
-        #finalQuestionDesc { /* Renamed from finalQuestion */
-            font-size: 22px; /* Adjusted size */
+        #finalQuestionDesc {
+            font-size: 22px;
             color: #ffcc00;
             text-shadow: 0 0 12px #ff9900;
             margin-bottom: 20px;
             font-style: italic;
         }
-         #progressText { /* Element for showing progress */
+         #progressText {
             position: absolute;
-            top: 20px;
+            top: 60px; /* Moved down slightly to make space for health bar */
             left: 20px;
             color: white;
-            font-size: 24px; /* Slightly larger */
+            font-size: 24px;
             font-weight: bold;
             z-index: 5;
-            text-shadow: 2px 2px 4px black; /* More pronounced shadow */
+            text-shadow: 2px 2px 4px black;
          }
         .alien-effect {
             position: absolute;
@@ -210,8 +214,8 @@
         let animationFrameId = null;
         let gamePaused = false;
         let victorySequenceActive = false;
-        let playerShakeX = 0; // Player shake offset X
-        let playerShakeY = 0; // Player shake offset Y
+        let playerShakeX = 0;
+        let playerShakeY = 0;
 
         // ** Gameplay State Variables **
         let grammarQuestionsAnswered = 0;
@@ -223,10 +227,10 @@
 
         // --- Player ---
         const player = {
-            x: canvas.width / 2 - 45,
-            y: canvas.height - 150,
             width: 90,
             height: 90,
+            x: canvas.width / 2 - (90 / 2),
+            y: canvas.height / 2 - (90 / 2),
             speed: 7,
             shootTimer: 0,
             shootDelay: 12,
@@ -239,18 +243,18 @@
         let playerBullets = [];
         let enemyBullets = [];
 
-        // --- Boss (GIM - Visual Only) ---
+        // --- Boss (GIM) ---
         const boss = {
-            // *** GIM SIZE INCREASED ***
             width: 240,
             height: 240,
-            // *** POSITION ADJUSTED FOR NEW SIZE ***
-            initialX: canvas.width / 2 - 120, // Centered: canvas_width / 2 - new_width / 2
-            initialY: 80, // Slightly higher
+            initialX: canvas.width / 2 - 120,
+            initialY: 80,
             x: canvas.width / 2 - 120,
             y: 80,
             attackTimer: 0,
             attackDelay: 70,
+            maxDecorativeHealth: 200,
+            decorativeHealth: 200
         };
 
         // --- Grammar Questions (Pool) ---
@@ -272,7 +276,7 @@
 
         // --- Final Prompt Question ---
         const finalPromptQuestion = { /* ... (igual que antes) ... */
-            question: "FINAL PROMPT CHALLENGE!",
+             question: "FINAL PROMPT CHALLENGE!",
             description: "Select the BEST prompt to ask an AI (like me!) to explain the usage of 'can' for ability:",
             options: [
                 "1. can explain ability?",
@@ -286,15 +290,27 @@
 
         // --- Game Functions ---
 
-        // Controls
+        // Controls (Keyboard)
         const keys = { ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false };
         window.addEventListener('keydown', (e) => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
         window.addEventListener('keyup', (e) => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
         restartButton.addEventListener('click', restartGame);
 
+        // Mouse Movement Control
+        canvas.addEventListener('mousemove', (event) => { /* ... (igual que antes) ... */
+              const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            player.x = mouseX - player.width / 2;
+            player.y = mouseY - player.height / 2;
+            player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
+            player.y = Math.max(0, Math.min(canvas.height - player.height, player.y));
+        });
+
+
         // Player Shoot
         function playerShoot() { /* ... (igual que antes) ... */
-             playerBullets.push({
+               playerBullets.push({
                 x: player.x + player.width / 2, y: player.y, radius: 8, speed: 14,
                 color: '#00FFFF', glow: true, glowColor: '#00FFFF'
             });
@@ -302,7 +318,7 @@
 
         // Show Question UI
         function showQuestion(questionObj) { /* ... (igual que antes) ... */
-             currentQuestion = questionObj;
+               currentQuestion = questionObj;
             const isFinal = questionObj === finalPromptQuestion;
             questionTextEl.textContent = questionObj.question;
             if (isFinal) {
@@ -323,8 +339,8 @@
         }
 
         // Check Answer Logic
-        function checkAnswer(selectedIndex, questionObj) { /* ... (lógica igual que antes) ... */
-            const isFinal = questionObj === finalPromptQuestion;
+        function checkAnswer(selectedIndex, questionObj) { /* ... (igual que antes) ... */
+               const isFinal = questionObj === finalPromptQuestion;
             const correctAnswerIndex = questionObj.answer;
             questionUI.style.display = 'none';
             currentQuestion = null;
@@ -362,26 +378,33 @@
         }
 
         // Create Enemy Bullets
-        function createEnemyBullets() { /* ... (igual que antes) ... */
+        function createEnemyBullets() {
              const bulletCount = 8;
              const bulletSpeed = 4;
-             const bulletSize = 15;
+             // *** INCREASED BULLET SIZE ***
+             const bulletSize = 22; // Larger orange bullets
              const bulletColor = '#FF8000';
              const glowColor = '#FF8000';
+
              for (let i = 0; i < bulletCount; i++) {
                  const angle = (Math.PI * 2) * (i / bulletCount) + (Math.random() - 0.5) * 0.5;
                  enemyBullets.push({
-                     x: boss.x + boss.width / 2, y: boss.y + boss.height / 2,
-                     radius: bulletSize, speed: bulletSpeed + (Math.random() - 0.5),
-                     color: bulletColor, dx: Math.cos(angle), dy: Math.sin(angle),
-                     glow: true, glowColor: glowColor
+                     x: boss.x + boss.width / 2,
+                     y: boss.y + boss.height / 2,
+                     radius: bulletSize, // Use new size
+                     speed: bulletSpeed + (Math.random() - 0.5),
+                     color: bulletColor,
+                     dx: Math.cos(angle),
+                     dy: Math.sin(angle),
+                     glow: true,
+                     glowColor: glowColor
                  });
              }
          }
 
         // Start Victory Sequence
         function startVictorySequence() { /* ... (igual que antes) ... */
-            if (victorySequenceActive) return;
+               if (victorySequenceActive) return;
             victorySequenceActive = true;
             console.log("Victory sequence started.");
             triggerBossExplosion();
@@ -397,7 +420,7 @@
 
         // Trigger Boss Explosion (Visuals ONLY)
          function triggerBossExplosion() { /* ... (igual que antes) ... */
-             console.log("Triggering boss explosion effect...");
+                console.log("Triggering boss explosion effect...");
              const explosionParticles = 350;
              const explosionColors = ['#00FF00', '#FFFF00', '#00FFFF', '#FFFFFF', '#90EE90'];
              for (let i = 0; i < explosionParticles; i++) {
@@ -420,7 +443,7 @@
 
         // Create Hit Particles
         function createHitParticles(x, y, count, color) { /* ... (igual que antes) ... */
-             for (let i = 0; i < count; i++) {
+                for (let i = 0; i < count; i++) {
                 const life = Math.random() * 30 + 10;
                 particles.push({
                     x: x, y: y, radius: Math.random() * 4 + 1, color: color,
@@ -432,7 +455,7 @@
 
         // Update Particles
          function updateParticles() { /* ... (igual que antes) ... */
-             for (let i = particles.length - 1; i >= 0; i--) {
+                for (let i = particles.length - 1; i >= 0; i--) {
                  const p = particles[i];
                  p.x += p.speedX; p.y += p.speedY; p.life--;
                  if (p.friction) { p.speedX *= p.friction; p.speedY *= p.friction; }
@@ -443,7 +466,7 @@
 
         // Screen Effects
         function triggerScreenEffect(color, duration) { /* ... (igual que antes) ... */
-            const effectDiv = document.createElement('div');
+               const effectDiv = document.createElement('div');
              effectDiv.style.position = 'absolute';
              effectDiv.style.top = '0';
              effectDiv.style.left = '0';
@@ -464,7 +487,7 @@
              }, 50);
         }
         function triggerScreenShake(duration) { /* ... (igual que antes) ... */
-              gameContainer.classList.add('screen-shake');
+                 gameContainer.classList.add('screen-shake');
              setTimeout(() => { gameContainer.classList.remove('screen-shake'); }, duration);
          }
 
@@ -473,8 +496,8 @@
         function resumeGame() { if (gamePaused) { gamePaused = false; console.log("Game resumed"); if (!gameOver && animationFrameId === null) { requestAnimationFrame(gameLoop); } } }
 
         // Restart Game
-        function restartGame() { /* ... (igual que antes, reseteando GIM al nuevo tamaño/posición) ... */
-            console.log("Restarting game...");
+        function restartGame() { /* ... (igual que antes) ... */
+             console.log("Restarting game...");
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             animationFrameId = null;
 
@@ -483,7 +506,7 @@
             gameOver = false; victory = false;
             gamePaused = false; currentQuestion = null;
             victorySequenceActive = false;
-            playerShakeX = 0; playerShakeY = 0; // Reset shake
+            playerShakeX = 0; playerShakeY = 0;
 
             grammarQuestionsAnswered = 0;
             finalQuestionUnlocked = false;
@@ -492,12 +515,11 @@
             availableGrammarQuestions = [...grammarQuestions];
 
             player.x = canvas.width / 2 - player.initialWidth / 2;
-            player.y = canvas.height - 150;
+            player.y = canvas.height / 2 - player.initialHeight / 2;
             player.width = player.initialWidth;
             player.height = player.initialHeight;
             player.shootTimer = 0;
 
-            // Reset boss to new size/position
             boss.width = 240;
             boss.height = 240;
             boss.initialX = canvas.width / 2 - 120;
@@ -506,6 +528,7 @@
             boss.y = boss.initialY;
             boss.attackTimer = 0;
             boss.attackDelay = 70;
+            boss.decorativeHealth = boss.maxDecorativeHealth;
 
             restartButton.style.display = 'none';
             questionUI.style.display = 'none';
@@ -519,15 +542,18 @@
         function update() {
             if (gameOver || gamePaused || imagesLoaded < totalImages || victorySequenceActive) return;
 
-            // --- Player Movement ---
+            // --- Player Movement (Keyboard) ---
             if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
             if (keys.ArrowRight && player.x < canvas.width - player.width) player.x += player.speed;
             if (keys.ArrowUp && player.y > 0) player.y -= player.speed;
             if (keys.ArrowDown && player.y < canvas.height - player.height) player.y += player.speed;
+            player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
+            player.y = Math.max(0, Math.min(canvas.height - player.height, player.y));
+
 
             // --- Player Shooting (Visual) ---
             if (player.autoShoot) { /* ... */
-                 player.shootTimer++;
+                    player.shootTimer++;
                 if (player.shootTimer >= player.shootDelay) {
                     playerShoot();
                     player.shootTimer = 0;
@@ -535,8 +561,8 @@
             }
 
             // --- Boss Attack & Movement ---
-            const horizontalMovementRange = 100; // Max distance GIM moves from center
-            boss.x = boss.initialX + Math.sin(Date.now() / 1800) * horizontalMovementRange; // Slower movement
+            const horizontalMovementRange = 100;
+            boss.x = boss.initialX + Math.sin(Date.now() / 1800) * horizontalMovementRange;
             boss.attackTimer++;
             if (boss.attackTimer >= boss.attackDelay) {
                 createEnemyBullets();
@@ -545,25 +571,34 @@
 
             // --- Calculate Player Shake based on GIM Movement ---
             const gimDisplacement = boss.x - boss.initialX;
-            // Normalize displacement: value between 0 and 1 approx
             const shakeIntensity = Math.min(1, Math.abs(gimDisplacement) / horizontalMovementRange);
-            // Max shake offset in pixels
-            const maxShake = 4; // Adjust for more/less shake
-            // Apply random shake based on intensity
+            const maxShake = 4;
             playerShakeX = (Math.random() - 0.5) * maxShake * shakeIntensity;
             playerShakeY = (Math.random() - 0.5) * maxShake * shakeIntensity;
 
 
             // --- Update Player Bullets ---
-             for (let i = playerBullets.length - 1; i >= 0; i--) { /* ... */
-                const bullet = playerBullets[i];
+             for (let i = playerBullets.length - 1; i >= 0; i--) {
+                 const bullet = playerBullets[i];
                  bullet.y -= bullet.speed;
+                 // Collision with boss for VISUAL effect only
                  if (boss.width > 0 &&
                      bullet.x > boss.x && bullet.x < boss.x + boss.width &&
                      bullet.y < boss.y + boss.height && bullet.y > boss.y)
                  {
                      playerBullets.splice(i, 1);
                      createHitParticles(bullet.x, bullet.y, 5, '#00FFFF');
+                     // Decrease decorative health
+                     boss.decorativeHealth -= 0.5;
+                     boss.decorativeHealth = Math.max(0, boss.decorativeHealth);
+
+                     // *** ADDED: Check for decorative health recharge ***
+                     if (boss.decorativeHealth === 0) {
+                         console.log("Decorative health reached 0. Recharging.");
+                         boss.decorativeHealth = boss.maxDecorativeHealth;
+                         // Optional: Add recharge visual effect
+                         createHitParticles(boss.x + boss.width / 2, boss.y + boss.height / 2, 30, '#00FF00'); // Green burst
+                     }
                      continue;
                  }
                  if (bullet.y < -bullet.radius) playerBullets.splice(i, 1);
@@ -571,8 +606,8 @@
 
 
             // --- Update Enemy Bullets ---
-            for (let i = enemyBullets.length - 1; i >= 0; i--) { /* ... */
-                 const bullet = enemyBullets[i];
+            for (let i = enemyBullets.length - 1; i >= 0; i--) { /* ... (igual que antes) ... */
+                    const bullet = enemyBullets[i];
                 bullet.x += bullet.dx * bullet.speed;
                 bullet.y += bullet.dy * bullet.speed;
                 const playerCenterX = player.x + player.width / 2;
@@ -599,8 +634,8 @@
             updateParticles();
 
             // --- Check for Final Question Unlock ---
-            if (!victorySequenceActive) { /* ... */
-                if (grammarQuestionsAnswered >= neededGrammarAnswers && !finalQuestionUnlocked && !inRetryLoop) {
+            if (!victorySequenceActive) { /* ... (igual que antes) ... */
+                   if (grammarQuestionsAnswered >= neededGrammarAnswers && !finalQuestionUnlocked && !inRetryLoop) {
                     console.log("Initial 12 grammar questions answered. Unlocking final prompt question.");
                     finalQuestionUnlocked = true;
                     showQuestion(finalPromptQuestion);
@@ -630,26 +665,15 @@
         }
 
         // --- Draw Function ---
-        function draw() {
-            if (imagesLoaded < totalImages) return;
+        function draw() { /* ... (igual que antes) ... */
+             if (imagesLoaded < totalImages) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // --- Draw GIM (Boss) ---
-            if (boss.width > 0) {
-                ctx.drawImage(bossImg, boss.x, boss.y, boss.width, boss.height);
-            }
-
-            // --- Draw Player (with shake effect) ---
-            // Apply shake offset only when drawing
+            if (boss.width > 0) { ctx.drawImage(bossImg, boss.x, boss.y, boss.width, boss.height); }
             ctx.drawImage(playerImg, player.x + playerShakeX, player.y + playerShakeY, player.width, player.height);
-
-            // --- Draw Bullets ---
             playerBullets.forEach(bullet => drawWithGlow(bullet.x, bullet.y, bullet.radius, bullet.color, bullet.glowColor || bullet.color, 10));
             enemyBullets.forEach(bullet => drawWithGlow(bullet.x, bullet.y, bullet.radius, bullet.color, bullet.glowColor || bullet.color, 12));
-
-            // --- Draw Particles ---
-            particles.forEach(particle => { /* ... */
-                 ctx.fillStyle = particle.color;
+            particles.forEach(particle => {
+                   ctx.fillStyle = particle.color;
                  const initial = particle.initialLife || 60;
                  ctx.globalAlpha = Math.max(0, particle.life / initial);
                  ctx.beginPath();
@@ -657,16 +681,29 @@
                  ctx.fill();
                  ctx.globalAlpha = 1.0;
             });
-
-            // --- Draw Score (Optional) ---
-            ctx.fillStyle = 'white';
-            ctx.font = '22px Arial';
-            ctx.textAlign = 'right';
+            ctx.fillStyle = 'white'; ctx.font = '22px Arial'; ctx.textAlign = 'right';
             ctx.fillText(`Puntaje: ${score}`, canvas.width - 20, 45);
-
-            // --- Draw Game Over/Victory Messages ---
-            if (gameOver) { /* ... (código igual que antes) ... */
-                 ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+            if (boss.width > 0) {
+                 const barWidthRatio = 0.5;
+                 const barHeight = 25;
+                 const barX = (canvas.width * (1 - barWidthRatio)) / 2;
+                 const barY = 20;
+                 const healthPercent = boss.decorativeHealth / boss.maxDecorativeHealth;
+                 const currentBarWidth = (canvas.width * barWidthRatio) * healthPercent;
+                 let barColor;
+                 if (healthPercent > 0.6) { barColor = '#00FF00'; } else if (healthPercent > 0.3) { barColor = '#FFFF00'; } else { barColor = '#FF0000'; }
+                 ctx.fillStyle = 'rgba(50, 50, 50, 0.7)';
+                 ctx.fillRect(barX, barY, canvas.width * barWidthRatio, barHeight);
+                 ctx.fillStyle = barColor;
+                 ctx.fillRect(barX, barY, currentBarWidth, barHeight);
+                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                 ctx.lineWidth = 2;
+                 ctx.strokeRect(barX, barY, canvas.width * barWidthRatio, barHeight);
+                  ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial'; ctx.textAlign = 'center';
+                  ctx.fillText('GIM VISUAL CORE', canvas.width / 2, barY - 5);
+            }
+            if (gameOver) {
+                   ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
                  ctx.fillRect(canvas.width / 2 - 350, canvas.height / 2 - 120, 700, 240);
                  ctx.strokeStyle = victory ? '#00FF00' : '#FF0000';
                  ctx.lineWidth = 4;
@@ -694,14 +731,14 @@
 
         // Draw with Glow Helper
         function drawWithGlow(x, y, radius, color, glowColor = color, blur = 15) { /* ... (igual que antes) ... */
-             ctx.shadowColor = glowColor; ctx.shadowBlur = blur; ctx.fillStyle = color;
+                ctx.shadowColor = glowColor; ctx.shadowBlur = blur; ctx.fillStyle = color;
              ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
              ctx.shadowBlur = 0;
         }
 
         // --- Game Loop ---
         function gameLoop(timestamp) { /* ... (igual que antes) ... */
-            if (gameOver && !victorySequenceActive) {
+               if (gameOver && !victorySequenceActive) {
                 draw();
                 animationFrameId = null;
                 console.log("Game Over state reached. Stopping game loop.");
@@ -714,7 +751,7 @@
 
         // --- Start Game ---
         function startGame() { /* ... (igual que antes) ... */
-              console.log("startGame function called.");
+                 console.log("startGame function called.");
              if (imagesLoaded === totalImages) {
                  if (animationFrameId) cancelAnimationFrame(animationFrameId);
                  progressTextEl.textContent = `${grammarQuestionsAnswered}/${neededGrammarAnswers}`;
@@ -727,7 +764,7 @@
 
          // Resize Handling
          window.addEventListener('resize', () => { /* ... (igual que antes) ... */
-              canvas.width = gameContainer.clientWidth; canvas.height = gameContainer.clientHeight;
+                 canvas.width = gameContainer.clientWidth; canvas.height = gameContainer.clientHeight;
              player.x = Math.min(player.x, canvas.width - player.width);
              player.y = Math.min(player.y, canvas.height - player.height);
              // Recalcular posición inicial del jefe al redimensionar
