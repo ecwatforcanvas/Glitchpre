@@ -3,332 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-ENGLISH//COURSE_OBJECTIVES</title>
+    <title>English Course with AI Tools // Objectives</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-        
+        /* Custom styles for futuristic look with solid background */
         body {
-            background-color: #000;
+            font-family: 'Inter', sans-serif;
+            /* Removed background GIF properties */
+            background-color: #0a0a1a; /* Solid dark blue-ish background */
+            color: #e0e0ff;
             margin: 0;
-            padding: 20px 0;
+            padding: 0;
             overflow-x: hidden;
-            font-family: 'Share Tech Mono', monospace;
-            color: #0ff;
-            text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
         }
-        
-        .matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.15;
-        }
-        
+
         .container {
             max-width: 900px;
-            margin: 20px auto;
-            padding: 30px;
-            border: 1px solid #0ff;
-            box-shadow: 0 0 15px #0ff, 0 0 30px #0ff;
-            background-color: rgba(0, 0, 0, 0.85);
+            margin: 40px auto;
+            padding: 40px;
+            /* Kept slightly more opaque background for contrast */
+            background: rgba(10, 10, 30, 0.9);
+            border: 1px solid rgba(0, 191, 255, 0.4);
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.25);
             position: relative;
             overflow-y: auto;
-            max-height: 90vh;
+            max-height: calc(100vh - 80px);
         }
-        
-        .container::before {
-            content: "";
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            border: 2px solid #f0f;
-            box-shadow: 0 0 10px #f0f, 0 0 20px #f0f;
-            z-index: -1;
-            opacity: 0.5;
-            animation: pulse 3s infinite alternate;
-        }
-        
+
         h1 {
-            color: #f0f;
-            text-shadow: 0 0 5px #f0f, 0 0 10px #f0f;
-            border-bottom: 1px solid #0ff;
-            padding-bottom: 10px;
-            font-size: 2.2em;
+            font-family: 'Share Tech Mono', monospace;
+            color: #ffffff;
+            text-align: center;
+            font-size: 2.5em;
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
+            border-bottom: 1px solid rgba(0, 191, 255, 0.4);
+            padding-bottom: 15px;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-top: 0;
         }
-        
+
         h2 {
-            color: #0f0;
-            text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
-            margin-top: 30px;
+            font-family: 'Share Tech Mono', monospace;
+            color: #00bfff;
             font-size: 1.8em;
             letter-spacing: 2px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed rgba(0, 191, 255, 0.3);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-transform: lowercase;
         }
-        
+
+        h2::first-letter {
+            text-transform: uppercase;
+        }
+
+        #specific-objectives-heading {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        #specific-objectives-heading:hover {
+            color: #ffffff;
+        }
+
+        .toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+            text-transform: none !important;
+        }
+
+        .toggle-icon.collapsed {
+             transform: rotate(0deg);
+        }
+
+        .toggle-icon.expanded {
+            transform: rotate(90deg);
+        }
+
         p {
-            line-height: 1.6;
+            line-height: 1.7;
             margin-bottom: 20px;
             font-size: 1.1em;
+            color: #c0c0f0;
+            text-transform: none;
         }
-        
+
         ul {
             list-style-type: none;
             padding-left: 0;
             margin-bottom: 30px;
         }
-        
+
+        #specific-objectives-list {
+            display: none;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            max-height: 0;
+        }
+
+        #specific-objectives-list.show {
+            display: block;
+            max-height: 1000px; /* Adjust if needed */
+        }
+
         li {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
             position: relative;
-            padding-left: 30px;
+            padding-left: 35px;
             font-size: 1em;
+            line-height: 1.6;
+            text-transform: none;
         }
-        
+
         li::before {
-            content: ">>";
+            content: "◆";
             position: absolute;
-            left: 0;
-            color: #ff0;
-            text-shadow: 0 0 5px #ff0;
+            left: 5px;
+            top: 1px;
+            color: #00bfff;
+            font-size: 1.2em;
+            text-shadow: 0 0 5px rgba(0, 191, 255, 0.5);
         }
-        
-        .glitch {
-            animation: glitch 1s linear infinite;
-        }
-        
-        @keyframes glitch {
-            0% { text-shadow: 0 0 5px #0ff; }
-            25% { text-shadow: 2px 0 5px #f0f, -2px 0 5px #0f0; }
-            50% { text-shadow: -3px 0 5px #0f0, 3px 0 5px #f0f; }
-            75% { text-shadow: 2px 0 5px #ff0, -2px 0 5px #0ff; }
-            100% { text-shadow: 0 0 5px #0ff; }
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 0.3; }
-            100% { opacity: 0.7; }
-        }
-        
-        .terminal-cursor {
-            animation: blink 1s step-end infinite;
-        }
-        
-        @keyframes blink {
-            from, to { opacity: 1; }
-            50% { opacity: 0; }
-        }
-        
-        .scanline {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                rgba(0, 255, 255, 0) 0%,
-                rgba(0, 255, 255, 0.1) 10%,
-                rgba(0, 255, 255, 0) 100%
-            );
-            animation: scan 8s linear infinite;
-            pointer-events: none;
-            z-index: 100;
-        }
-        
-        @keyframes scan {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
-        
-        .corner {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border-style: solid;
-            border-color: #0ff;
-            border-width: 0;
-            box-shadow: 0 0 10px #0ff;
-        }
-        
-        .top-left {
-            top: 0;
-            left: 0;
-            border-top-width: 3px;
-            border-left-width: 3px;
-        }
-        
-        .top-right {
-            top: 0;
-            right: 0;
-            border-top-width: 3px;
-            border-right-width: 3px;
-        }
-        
-        .bottom-left {
-            bottom: 0;
-            left: 0;
-            border-bottom-width: 3px;
-            border-left-width: 3px;
-        }
-        
-        .bottom-right {
-            bottom: 0;
-            right: 0;
-            border-bottom-width: 3px;
-            border-right-width: 3px;
-        }
-        
-        /* Scrollbar styling */
+
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 8px;
         }
-        
+
         ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(20, 20, 40, 0.5);
+            border-radius: 4px;
         }
-        
+
         ::-webkit-scrollbar-thumb {
-            background: #0ff;
-            box-shadow: 0 0 5px #0ff;
+            background: rgba(0, 191, 255, 0.6);
+            border-radius: 4px;
         }
-        
+
         ::-webkit-scrollbar-thumb:hover {
-            background: #f0f;
-            box-shadow: 0 0 5px #f0f;
+            background: rgba(0, 191, 255, 0.9);
         }
-        
-        .status-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 5px 10px;
-            border-top: 1px solid #0ff;
-            box-shadow: 0 0 10px #0ff;
-            font-size: 0.8em;
-            display: flex;
-            justify-content: space-between;
-        }
+
     </style>
 </head>
 <body>
-    <canvas id="matrix" class="matrix-bg"></canvas>
-    
-    <div class="container">
-        <div class="corner top-left"></div>
-        <div class="corner top-right"></div>
-        <div class="corner bottom-left"></div>
-        <div class="corner bottom-right"></div>
-        
-        <div class="scanline"></div>
-        
-        <h1 class="glitch">>_ENGLISH COURSE WITH AI TOOLS_OBJECTIVES<span class="terminal-cursor">_</span></h1>
-        
-        <h2>> GENERAL_OBJECTIVE</h2>
-        <p>TO DEVELOP A BASIC ENGLISH II COURSE WITH AI TOOLS ON THE CANVAS PLATFORM, ENHANCING LANGUAGE ACQUISITION THROUGH INTERACTIVE, AI SUPPORTED TOOLS.</p>
-        
-        <h2>> SPECIFIC_OBJECTIVES</h2>
-        
-        <ul>
-            <li>TO CREATE AN INSTRUCTIONAL DESIGN THAT PROVIDES ENGAGING AND INTERACTIVE ACTIVITIES TO SUPPORT STUDENTS' LEARNING.</li>
-            <li>TO DESIGN INTERACTIVE ACTIVITIES USING CHATGPT, DEEPSEEK, GEMINI, AND COPILOT, ENHANCING STUDENT ENGAGEMENT AND PROVIDING DYNAMIC LANGUAGE PRACTICE.</li>
-            <li>TO CREATE GRAMMAR INFOGRAPHICS WITH CANVA DESIGN EDITOR, FACILITATING VISUAL LEARNING AND REINFORCING KEY LANGUAGE CONCEPTS.</li>
-            <li>TO PRODUCE INSTRUCTIONAL VIDEOS USING CAPCUT, IMPROVING COMPREHENSION THROUGH MULTIMEDIA RESOURCES.</li>
-            <li>TO DEVELOP INTERACTIVE PRESENTATIONS ON CANVA, SUPPORTING STRUCTURED AND VISUALLY APPEALING LESSON DELIVERY.</li>
-            <li>TO DESIGN H5P-BASED ACTIVITIES USING LUMI, ENABLING INTERACTIVE EXERCISES FOR ENHANCED STUDENT PARTICIPATION.</li>
-            <li>TO GENERATE KEY VOCABULARY PDFS, AIDING IN VOCABULARY RETENTION AND QUICK REFERENCE FOR STUDENTS.</li>
-            <li>TO CRAFT GUIDED INSTRUCTIONS FOR VOICEMAKER, HELPING STUDENTS IMPROVE PRONUNCIATION AND LISTENING SKILLS THROUGH TEXT-TO-SPEECH TECHNOLOGY.</li>
-            <li>TO PROVIDE STEP-BY-STEP GUIDES FOR LEONARDO.AI, ALLOWING STUDENTS TO CREATE AI-GENERATED VISUALS FOR CREATIVE LANGUAGE PRACTICE.</li>
-            <li>TO DEVELOP AN HTML VIDEO GAME AS A FINAL PROJECT, REINFORCING COURSE CONTENT THROUGH GAMIFIED LEARNING.</li>
-            <li>TO STRUCTURE A LEARNING PATH ON CANVAS, ORGANIZING CONTENT FOR A SEAMLESS AND PROGRESSIVE LEARNING EXPERIENCE.</li>
-            <li>TO IMPLEMENT CONTROL QUIZZES FOR EACH MODULE, ENSURING COMPREHENSION AND RETENTION OF KEY CONCEPTS.</li>
-        </ul>
-        
-        <p>> SYSTEM_READY<span class="terminal-cursor">_</span></p>
-    </div>
 
-    <div class="status-bar">
-        <span>> SYSTEM_STATUS: <span style="color: #0f0;">ONLINE</span></span>
-        <span>> SCROLL: <span style="color: #ff0;">ENABLED</span></span>
-        <span>> MEMORY: <span style="color: #f0f;">64.2MB/128MB</span></span>
+    <div class="container">
+        <h1>ENGLISH COURSE WITH AI TOOLS // OBJECTIVES</h1>
+
+        <h2>> General_objective</h2>
+        <p>To develop a basic English II course with AI tools on the Canvas platform, enhancing language acquisition through interactive, AI supported tools.</p>
+
+        <h2 id="specific-objectives-heading">> Specific_objectives <span class="toggle-icon collapsed" id="toggle-icon">▶</span></h2>
+
+        <ul id="specific-objectives-list">
+            <li>To create an instructional design that provides engaging and interactive activities to support students' learning.</li>
+            <li>To design engaging and interactive activities using tools such as ChatGPT, DeepSeek, Gemini, Copilot, Canva, H5P (via Lumi), and HTML games, promoting dynamic language practice and student participation.</li>
+            <li>To create grammar infographics with Canva, facilitating visual learning and reinforcing key language concepts.</li>
+            <li>To produce instructional videos using CapCut, enhancing comprehension through multimedia resources.</li>
+            <li>To provide step-by-step guides for Leonardo.AI, encouraging creative language practice through AI-generated visuals.</li>
+            <li>To implement control quizzes for each module, monitoring comprehension and reinforcement of key concepts.</li>
+            </ul>
+
+        <p>> System_initialized // ready</p>
     </div>
 
     <script>
-        // Matrix background effect
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
-        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const nums = '0123456789';
-        const symbols = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
-        
-        const alphabet = katakana + latin + nums + symbols;
-        
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        
-        const rainDrops = [];
-        
-        for (let x = 0; x < columns; x++) {
-            rainDrops[x] = Math.random() * canvas.height;
-        }
-        
-        const draw = () => {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#0f0';
-            ctx.font = fontSize + 'px monospace';
-            
-            for (let i = 0; i < rainDrops.length; i++) {
-                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-                
-                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    rainDrops[i] = 0;
-                }
-                rainDrops[i]++;
+        // Get the heading, list, and icon elements
+        const objectivesHeading = document.getElementById('specific-objectives-heading');
+        const objectivesList = document.getElementById('specific-objectives-list');
+        const toggleIcon = document.getElementById('toggle-icon');
+
+        // Add click event listener to the heading
+        objectivesHeading.addEventListener('click', () => {
+            // Check if the list is currently shown
+            const isShown = objectivesList.classList.contains('show');
+
+            if (isShown) {
+                // If shown, start hiding animation
+                objectivesList.style.maxHeight = objectivesList.scrollHeight + 'px'; // Set current height
+                requestAnimationFrame(() => { // Allow setting height before changing
+                    objectivesList.style.maxHeight = '0'; // Animate to 0
+                });
+                toggleIcon.classList.remove('expanded');
+                toggleIcon.classList.add('collapsed');
+                toggleIcon.textContent = '▶'; // Change icon to collapsed state
+
+                // Remove 'show' class after animation finishes
+                 objectivesList.addEventListener('transitionend', () => {
+                    if (objectivesList.style.maxHeight === '0px') { // Ensure it only removes if fully closed
+                       objectivesList.classList.remove('show');
+                    }
+                 }, { once: true }); // Remove listener after it runs once
+
+            } else {
+                 // If hidden, add 'show' class to make it display: block
+                objectivesList.classList.add('show');
+                // Set max-height to its scroll height to animate opening
+                objectivesList.style.maxHeight = objectivesList.scrollHeight + 'px';
+                toggleIcon.classList.remove('collapsed');
+                toggleIcon.classList.add('expanded');
+                toggleIcon.textContent = '▼'; // Change icon to expanded state
+
+                 // Remove max-height after animation to allow content reflow if needed
+                objectivesList.addEventListener('transitionend', () => {
+                    // Check if it's still supposed to be shown before removing max-height
+                    if (objectivesList.classList.contains('show')) {
+                       objectivesList.style.maxHeight = null; // Remove inline style
+                    }
+                }, { once: true }); // Remove listener after it runs once
             }
-        };
-        
-        setInterval(draw, 30);
-        
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
         });
-        
-        // Add glitch effect to random letters occasionally
-        setInterval(() => {
-            const letters = document.querySelectorAll('li, p, h1, h2');
-            const randomIndex = Math.floor(Math.random() * letters.length);
-            letters[randomIndex].classList.add('glitch');
-            
-            setTimeout(() => {
-                letters[randomIndex].classList.remove('glitch');
-            }, 200);
-        }, 1000);
-        
-        // Update memory usage in status bar
-        setInterval(() => {
-            const memoryElement = document.querySelector('.status-bar span:last-child span');
-            const currentMem = parseFloat(memoryElement.textContent);
-            const newMem = (currentMem + (Math.random() * 2 - 1)).toFixed(1);
-            const clampedMem = Math.min(128, Math.max(64, newMem));
-            memoryElement.textContent = `${clampedMem}MB/128MB`;
-        }, 3000);
     </script>
 </body>
 </html>
