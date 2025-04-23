@@ -6,28 +6,29 @@
     <title>English Course with AI Tools // Objectives</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles using UTEC-inspired solid colors with purple-reddish background */
+        /* Custom styles with gradient background */
         body {
             font-family: 'Inter', sans-serif;
-            /* Purple-reddish as main background */
-            background-color: #660000; /* A shade of purple */
+            /* Gradient background from the provided image */
+            background: linear-gradient to bottom, #E91E63, #F06292; /* Gradient from reddish-pink to lighter pink */
             color: #FFFFFF; /* White text */
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            min-height: 100vh; /* Ensure gradient covers the full viewport height */
         }
 
         .container {
             max-width: 900px;
             margin: 40px auto;
             padding: 40px;
-            /* Slightly darker background for the container, maybe a dark purple */
-            background: rgba(40, 0, 40, 0.9); /* Darker purple with transparency */
-            /* Border with a color that complements purple, maybe a darker red or magenta */
-            border: 1px solid #C71585; /* Medium Violet Red */
+            /* Darker, semi-transparent background for the container to contrast with the gradient */
+            background: rgba(50, 10, 30, 0.9); /* Dark reddish-purple with transparency */
+            /* Border color that complements the gradient */
+            border: 1px solid #AD1457; /* Darker shade of the gradient color */
             border-radius: 12px;
             /* Box shadow with a hint of the border color */
-            box-shadow: 0 0 30px rgba(199, 21, 133, 0.5); /* Medium Violet Red shadow */
+            box-shadow: 0 0 30px rgba(173, 20, 87, 0.5); /* Darker shade shadow */
             position: relative;
             overflow-y: auto;
             max-height: calc(100vh - 80px);
@@ -41,22 +42,22 @@
             letter-spacing: 4px;
             margin-bottom: 30px;
             /* Text shadow with a hint of the border color */
-            text-shadow: 0 0 8px rgba(199, 21, 133, 0.5); /* Medium Violet Red shadow */
+            text-shadow: 0 0 8px rgba(173, 20, 87, 0.5); /* Darker shade shadow */
             /* Border bottom with the border color */
-            border-bottom: 1px solid #C71585; /* Medium Violet Red */
+            border-bottom: 1px solid #AD1457; /* Darker shade */
             padding-bottom: 15px;
             text-transform: uppercase;
         }
 
         h2 {
             font-family: 'Share Tech Mono', monospace;
-            color: #BA55D3; /* Medium Orchid (lighter purple) for headings */
+            color: #FF80AB; /* Light pink for headings */
             font-size: 1.8em;
             letter-spacing: 2px;
             margin-top: 40px;
             margin-bottom: 20px;
             /* Border bottom dashed with the border color */
-            border-bottom: 1px dashed #C71585; /* Medium Violet Red */
+            border-bottom: 1px dashed #AD1457; /* Darker shade */
             padding-bottom: 10px;
             display: flex;
             justify-content: space-between;
@@ -139,9 +140,9 @@
             position: absolute;
             left: 5px;
             top: 1px;
-            color: #BA55D3; /* Medium Orchid (lighter purple) for list markers */
+            color: #FF80AB; /* Light pink for list markers */
             font-size: 1.2em;
-            text-shadow: 0 0 5px rgba(186, 85, 211, 0.5); /* Shadow based on marker color */
+            text-shadow: 0 0 5px rgba(255, 128, 171, 0.5); /* Shadow based on marker color */
         }
 
         /* Scrollbar styles using the new theme colors */
@@ -150,17 +151,17 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(40, 0, 40, 0.5); /* Darker purple with transparency */
+            background: rgba(50, 10, 30, 0.5); /* Dark reddish-purple with transparency */
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(199, 21, 133, 0.6); /* Medium Violet Red with transparency */
+            background: rgba(173, 20, 87, 0.6); /* Darker shade with transparency */
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(199, 21, 133, 0.9); /* Medium Violet Red opaque on hover */
+            background: rgba(173, 20, 87, 0.9); /* Darker shade opaque on hover */
         }
 
     </style>
