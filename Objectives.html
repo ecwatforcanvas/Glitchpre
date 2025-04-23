@@ -6,12 +6,12 @@
     <title>English Course with AI Tools // Objectives</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles for futuristic look with solid background */
+        /* Custom styles using UTEC-inspired solid colors with purple-reddish background */
         body {
             font-family: 'Inter', sans-serif;
-            /* Removed background GIF properties */
-            background-color: #8B0000; /* Solid dark blue-ish background */
-            color: #e0e0ff;
+            /* Purple-reddish as main background */
+            background-color: #660000; /* A shade of purple */
+            color: #FFFFFF; /* White text */
             margin: 0;
             padding: 0;
             overflow-x: hidden;
@@ -21,11 +21,13 @@
             max-width: 900px;
             margin: 40px auto;
             padding: 40px;
-            /* Kept slightly more opaque background for contrast */
-            background: rgba(10, 10, 30, 0.9);
-            border: 1px solid rgba(0, 191, 255, 0.4);
+            /* Slightly darker background for the container, maybe a dark purple */
+            background: rgba(40, 0, 40, 0.9); /* Darker purple with transparency */
+            /* Border with a color that complements purple, maybe a darker red or magenta */
+            border: 1px solid #C71585; /* Medium Violet Red */
             border-radius: 12px;
-            box-shadow: 0 0 30px rgba(0, 191, 255, 0.25);
+            /* Box shadow with a hint of the border color */
+            box-shadow: 0 0 30px rgba(199, 21, 133, 0.5); /* Medium Violet Red shadow */
             position: relative;
             overflow-y: auto;
             max-height: calc(100vh - 80px);
@@ -33,43 +35,53 @@
 
         h1 {
             font-family: 'Share Tech Mono', monospace;
-            color: #ffffff;
+            color: #FFFFFF; /* White text */
             text-align: center;
             font-size: 2.5em;
             letter-spacing: 4px;
             margin-bottom: 30px;
-            text-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
-            border-bottom: 1px solid rgba(0, 191, 255, 0.4);
+            /* Text shadow with a hint of the border color */
+            text-shadow: 0 0 8px rgba(199, 21, 133, 0.5); /* Medium Violet Red shadow */
+            /* Border bottom with the border color */
+            border-bottom: 1px solid #C71585; /* Medium Violet Red */
             padding-bottom: 15px;
             text-transform: uppercase;
         }
 
         h2 {
             font-family: 'Share Tech Mono', monospace;
-            color: #00bfff;
+            color: #BA55D3; /* Medium Orchid (lighter purple) for headings */
             font-size: 1.8em;
             letter-spacing: 2px;
             margin-top: 40px;
             margin-bottom: 20px;
-            border-bottom: 1px dashed rgba(0, 191, 255, 0.3);
+            /* Border bottom dashed with the border color */
+            border-bottom: 1px dashed #C71585; /* Medium Violet Red */
             padding-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            text-transform: lowercase;
         }
 
+        /* Keep first letter uppercase for h2 */
         h2::first-letter {
             text-transform: uppercase;
         }
 
         #specific-objectives-heading {
             cursor: pointer;
-            transition: color 0.3s ease;
+            transition: color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease; /* Add text-shadow to transition */
         }
 
+        /* Hover effect for Specific Objectives heading - Metallic look (remains) */
         #specific-objectives-heading:hover {
-            color: #ffffff;
+            color: #E0E0E0; /* Lighter grey for metallic base */
+            transform: translateX(10px); /* Move 10px to the right on hover */
+            /* Metallic text-shadow layers */
+            text-shadow:
+                0 0 5px rgba(255, 255, 255, 0.8), /* White highlight */
+                0 0 10px rgba(200, 200, 200, 0.6), /* Lighter grey shadow */
+                0 0 15px rgba(150, 150, 150, 0.4); /* Darker grey shadow */
         }
 
         .toggle-icon {
@@ -90,7 +102,7 @@
             line-height: 1.7;
             margin-bottom: 20px;
             font-size: 1.1em;
-            color: #c0c0f0;
+            color: #FFFFFF; /* White text */
             text-transform: none;
         }
 
@@ -118,6 +130,7 @@
             padding-left: 35px;
             font-size: 1em;
             line-height: 1.6;
+            color: #FFFFFF; /* White text for list items */
             text-transform: none;
         }
 
@@ -126,27 +139,28 @@
             position: absolute;
             left: 5px;
             top: 1px;
-            color: #00bfff;
+            color: #BA55D3; /* Medium Orchid (lighter purple) for list markers */
             font-size: 1.2em;
-            text-shadow: 0 0 5px rgba(0, 191, 255, 0.5);
+            text-shadow: 0 0 5px rgba(186, 85, 211, 0.5); /* Shadow based on marker color */
         }
 
+        /* Scrollbar styles using the new theme colors */
         ::-webkit-scrollbar {
             width: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(20, 20, 40, 0.5);
+            background: rgba(40, 0, 40, 0.5); /* Darker purple with transparency */
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(0, 191, 255, 0.6);
+            background: rgba(199, 21, 133, 0.6); /* Medium Violet Red with transparency */
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 191, 255, 0.9);
+            background: rgba(199, 21, 133, 0.9); /* Medium Violet Red opaque on hover */
         }
 
     </style>
@@ -156,19 +170,17 @@
     <div class="container">
         <h1>ENGLISH COURSE WITH AI TOOLS // OBJECTIVES</h1>
 
-        <h2>> General_objective</h2>
+        <h2>> General_Objective</h2>
         <p>To develop a basic English II course with AI tools on the Canvas platform, enhancing language acquisition through interactive, AI supported tools.</p>
 
-        <h2 id="specific-objectives-heading">> Specific_objectives <span class="toggle-icon collapsed" id="toggle-icon">▶</span></h2>
+        <h2 id="specific-objectives-heading">> Specific_Objectives <span class="toggle-icon collapsed" id="toggle-icon">▶</span></h2>
 
         <ul id="specific-objectives-list">
             <li>To create an instructional design that provides engaging and interactive activities to support students' learning.</li>
+            <li>To apply emerging technologies like Voicemaker and Leonardo.AI to improve students' pronunciation, listening skills, and creativity in language learning by integrating text-to-speech and AI-generated visuals.</li>
             <li>To design engaging and interactive activities using tools such as ChatGPT, DeepSeek, Gemini, Copilot, Canva, H5P (via Lumi), and HTML games, promoting dynamic language practice and student participation.</li>
-            <li>To create grammar infographics with Canva, facilitating visual learning and reinforcing key language concepts.</li>
-            <li>To produce instructional videos using CapCut, enhancing comprehension through multimedia resources.</li>
-            <li>To provide step-by-step guides for Leonardo.AI, encouraging creative language practice through AI-generated visuals.</li>
             <li>To implement control quizzes for each module, monitoring comprehension and reinforcement of key concepts.</li>
-            </ul>
+        </ul>
 
     </div>
 
@@ -194,14 +206,14 @@
                 toggleIcon.textContent = '▶'; // Change icon to collapsed state
 
                 // Remove 'show' class after animation finishes
-                 objectivesList.addEventListener('transitionend', () => {
+                objectivesList.addEventListener('transitionend', () => {
                     if (objectivesList.style.maxHeight === '0px') { // Ensure it only removes if fully closed
-                       objectivesList.classList.remove('show');
+                        objectivesList.classList.remove('show');
                     }
-                 }, { once: true }); // Remove listener after it runs once
+                }, { once: true }); // Remove listener after it runs once
 
             } else {
-                 // If hidden, add 'show' class to make it display: block
+                // If hidden, add 'show' class to make it display: block
                 objectivesList.classList.add('show');
                 // Set max-height to its scroll height to animate opening
                 objectivesList.style.maxHeight = objectivesList.scrollHeight + 'px';
@@ -209,11 +221,11 @@
                 toggleIcon.classList.add('expanded');
                 toggleIcon.textContent = '▼'; // Change icon to expanded state
 
-                 // Remove max-height after animation to allow content reflow if needed
+                // Remove max-height after animation to allow content reflow if needed
                 objectivesList.addEventListener('transitionend', () => {
                     // Check if it's still supposed to be shown before removing max-height
                     if (objectivesList.classList.contains('show')) {
-                       objectivesList.style.maxHeight = null; // Remove inline style
+                        objectivesList.style.maxHeight = null; // Remove inline style
                     }
                 }, { once: true }); // Remove listener after it runs once
             }
