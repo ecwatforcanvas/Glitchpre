@@ -90,12 +90,9 @@
             overflow: hidden;
         }
 
-        /* Specific style for the non-interactive foundation module */
-        .module.foundation {
-            cursor: default; /* Default cursor for non-interactive module */
-        }
+        /* Removed specific styles for .module.foundation */
 
-        .module:not(.foundation)::before { /* Apply shine effect only to interactive modules */
+        .module::before { /* Apply shine effect to all modules */
             content: '';
             position: absolute;
             top: -50%;
@@ -113,12 +110,12 @@
             transition: all 0.5s;
         }
 
-        .module:not(.foundation):hover { /* Apply hover effect only to interactive modules */
+        .module:hover { /* Apply hover effect to all modules */
             transform: scale(1.05);
             box-shadow: 0 0 30px rgba(164, 212, 174, 0.5);
         }
 
-        .module:not(.foundation):hover::before { /* Apply shine animation only to interactive modules */
+        .module:hover::before { /* Apply shine animation to all modules */
             animation: shine 1.5s;
         }
 
@@ -138,14 +135,11 @@
             background: rgba(0, 10, 5, 0.5);
             position: relative;
             /* Added cursor pointer to the title for interactive modules */
-            cursor: pointer;
+            cursor: pointer; /* Cursor pointer for all module titles */
             user-select: none; /* Prevent text selection on click */
         }
 
-        /* Specific style for the foundation module title */
-        .module.foundation h2 {
-             cursor: default; /* Default cursor for foundation title */
-        }
+        /* Removed specific style for .module.foundation h2 */
 
 
         .module-content {
@@ -321,8 +315,8 @@
         </div>
 
         <div class="modules-container">
-            <div class="module foundation">
-                <h2>Foundation</h2> <div class="module-content expanded"> <div class="content-item">Welcome video</div>
+            <div class="module"> <h2>Foundation</h2>
+                <div class="module-content"> <div class="content-item">Welcome video</div>
                     <div class="content-item">Prompts & Artificial Intelligences "AIs"</div>
                     <div class="quiz-item">Quiz control: English Course with AI Tools</div>
                 </div>
@@ -330,7 +324,8 @@
 
             <div class="module">
                 <h2>Module 1: AI Power-up</h2>
-                <div class="module-content"> <div class="lesson">
+                <div class="module-content">
+                    <div class="lesson">
                         <div class="lesson-title">Lesson 1</div>
                         <div class="lesson-content">
                             <div class="content-item">SportStar AI interviewer</div>
@@ -359,7 +354,8 @@
 
             <div class="module">
                 <h2>Module 2: Out of the Office</h2>
-                <div class="module-content"> <div class="lesson">
+                <div class="module-content">
+                    <div class="lesson">
                         <div class="lesson-title">Lesson 1</div>
                         <div class="lesson-content">
                             <div class="content-item">Back From Vacation</div>
@@ -388,7 +384,8 @@
 
             <div class="module">
                 <h2>Module 3: From the Mall to the Station</h2>
-                <div class="module-content"> <div class="lesson">
+                <div class="module-content">
+                    <div class="lesson">
                         <div class="lesson-title">Lesson 1</div>
                         <div class="lesson-content">
                             <div class="content-item">Let's Talk Shop with AI</div>
@@ -417,7 +414,8 @@
 
              <div class="module">
                 <h2>Module 4: Essential Travel Skills</h2>
-                <div class="module-content"> <div class="lesson">
+                <div class="module-content">
+                    <div class="lesson">
                         <div class="lesson-title">Lesson 1</div>
                         <div class="lesson-content">
                             <div class="content-item">Talking Text to Audio with Voicemaker</div>
@@ -448,7 +446,12 @@
             </div>
 
             <div class="module">
-                <h2>Resources 🤖</h2> <div class="module-content"> <div class="content-item">Videogame G.I.M Glitch Into the MOOC</div> <div class="pdf-item">PDF FILE: Vocabulary AI Power-Up</div> <div class="pdf-item">PDF FILE: Vocabulary Out of the office</div> </div>
+                <h2>Resources 🤖</h2>
+                <div class="module-content">
+                    <div class="content-item">Videogame G.I.M Glitch Into the MOOC</div>
+                    <div class="pdf-item">PDF FILE: Vocabulary AI Power-Up</div>
+                    <div class="pdf-item">PDF FILE: Vocabulary Out of the office</div>
+                </div>
             </div>
         </div>
     </div>
@@ -495,8 +498,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             createParticles();
 
-            // Get all module titles except the foundation module
-            const moduleTitles = document.querySelectorAll('.module:not(.foundation) h2');
+            // Get all module titles
+            const moduleTitles = document.querySelectorAll('.module h2'); // Changed selector to include all h2
 
             moduleTitles.forEach(title => {
                 title.addEventListener('click', function() {
@@ -516,11 +519,7 @@
                 });
             });
 
-            // Ensure the Foundation module content is always expanded on load
-            const foundationContent = document.querySelector('.module.foundation .module-content');
-            if (foundationContent) {
-                 foundationContent.style.maxHeight = foundationContent.scrollHeight + 'px';
-            }
+            // Removed the code that forced the Foundation module to be expanded on load
         });
     </script>
 </body>
