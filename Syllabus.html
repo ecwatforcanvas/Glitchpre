@@ -5,7 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI English Course Mind Map</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        /* Changed font to a more standard sans-serif */
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif; /* Changed font */
+            color: #e0f7fa; /* Adjusted default text color for better readability with Arial */
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at center, rgba(106, 193, 224, 0.05) 0%, transparent 70%);
+        }
 
         :root {
             --neon-blue: #0ff;
@@ -17,23 +26,13 @@
             --ghibli-green: #a4d4ae;
         }
 
-        body {
-            background-color: #000;
-            margin: 0;
-            padding: 20px;
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--neon-blue);
-            overflow-x: hidden;
-            background-image: radial-gradient(circle at center, rgba(106, 193, 224, 0.05) 0%, transparent 70%);
-        }
-
         .mindmap-container {
             max-width: 1200px;
             margin: 0 auto;
             position: relative;
-            display: flex; /* Added for layout control */
-            flex-direction: column; /* Stack items vertically by default */
-            align-items: center; /* Center items horizontally */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .center-node {
@@ -49,7 +48,7 @@
             background: url('https://ecwatforcanvas.github.io/Images/Studio%20Ghibli%20ECAT.png') center/contain no-repeat;
             filter: drop-shadow(0 0 15px var(--ghibli-blue)) brightness(1.1);
             animation: float 6s ease-in-out infinite;
-            margin-bottom: 40px; /* Add margin below the image */
+            margin-bottom: 40px;
         }
 
         @keyframes float {
@@ -62,8 +61,8 @@
             font-size: 1.8em;
             text-transform: uppercase;
             text-shadow: 0 0 10px var(--ghibli-blue),
-                          0 0 20px var(--ghibli-blue),
-                          2px 2px 0 rgba(0,0,0,0.5);
+                         0 0 20px var(--ghibli-blue),
+                         2px 2px 0 rgba(0,0,0,0.5);
             padding: 20px;
             background: rgba(0, 0, 0, 0.5);
             border-radius: 10px;
@@ -76,7 +75,7 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 30px;
-            margin-top: 0; /* Removed top margin, was 40px */
+            margin-top: 0;
         }
 
         .module {
@@ -86,13 +85,17 @@
             padding: 0;
             background: rgba(0, 20, 10, 0.7);
             box-shadow: 0 0 20px rgba(164, 212, 174, 0.3);
-            cursor: pointer;
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
         }
 
-        .module::before {
+        /* Specific style for the non-interactive foundation module */
+        .module.foundation {
+            cursor: default; /* Default cursor for non-interactive module */
+        }
+
+        .module:not(.foundation)::before { /* Apply shine effect only to interactive modules */
             content: '';
             position: absolute;
             top: -50%;
@@ -110,12 +113,12 @@
             transition: all 0.5s;
         }
 
-        .module:hover {
+        .module:not(.foundation):hover { /* Apply hover effect only to interactive modules */
             transform: scale(1.05);
             box-shadow: 0 0 30px rgba(164, 212, 174, 0.5);
         }
 
-        .module:hover::before {
+        .module:not(.foundation):hover::before { /* Apply shine animation only to interactive modules */
             animation: shine 1.5s;
         }
 
@@ -134,16 +137,31 @@
             text-shadow: 0 0 5px rgba(164, 212, 174, 0.7);
             background: rgba(0, 10, 5, 0.5);
             position: relative;
+            /* Added cursor pointer to the title for interactive modules */
+            cursor: pointer;
+            user-select: none; /* Prevent text selection on click */
         }
 
+        /* Specific style for the foundation module title */
+        .module.foundation h2 {
+             cursor: default; /* Default cursor for foundation title */
+        }
+
+
         .module-content {
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 15px;
-            transition: all 0.5s ease;
+            max-height: 0; /* Start collapsed */
+            overflow: hidden;
+            padding: 0 15px; /* Adjust padding for collapsed state */
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out; /* Smooth transition */
             scrollbar-width: thin;
             scrollbar-color: var(--ghibli-blue) rgba(0, 20, 10, 0.5);
         }
+
+        .module-content.expanded {
+            max-height: 400px; /* Max height when expanded */
+            padding: 15px; /* Restore padding when expanded */
+        }
+
 
         /* Scrollbar styling */
         .module-content::-webkit-scrollbar {
@@ -244,6 +262,23 @@
             font-size: 1.1em;
         }
 
+         .pdf-item {
+            margin: 12px 0;
+            padding-left: 20px;
+            position: relative;
+            color: var(--neon-blue); /* Using neon blue for PDF items */
+            font-weight: bold;
+        }
+
+        .pdf-item:before {
+            content: "📄"; /* File emoji */
+            position: absolute;
+            left: 5px;
+            color: var(--neon-blue);
+            font-size: 1.1em;
+        }
+
+
         @keyframes pulse {
             0% { transform: scale(0.98); opacity: 0.8; }
             50% { transform: scale(1.02); opacity: 1; }
@@ -286,10 +321,8 @@
         </div>
 
         <div class="modules-container">
-            <div class="module">
-                <h2>Foundation Module</h2>
-                <div class="module-content">
-                    <div class="content-item">Welcome video</div>
+            <div class="module foundation">
+                <h2>Foundation</h2> <div class="module-content expanded"> <div class="content-item">Welcome video</div>
                     <div class="content-item">Prompts & Artificial Intelligences "AIs"</div>
                     <div class="quiz-item">Quiz control: English Course with AI Tools</div>
                 </div>
@@ -297,8 +330,7 @@
 
             <div class="module">
                 <h2>Module 1: AI Power-up</h2>
-                <div class="module-content">
-                    <div class="lesson">
+                <div class="module-content"> <div class="lesson">
                         <div class="lesson-title">Lesson 1</div>
                         <div class="lesson-content">
                             <div class="content-item">SportStar AI interviewer</div>
@@ -327,8 +359,7 @@
 
             <div class="module">
                 <h2>Module 2: Out of the Office</h2>
-                <div class="module-content">
-                    <div class="lesson">
+                <div class="module-content"> <div class="lesson">
                         <div class="lesson-title">Lesson 1</div>
                         <div class="lesson-content">
                             <div class="content-item">Back From Vacation</div>
@@ -357,8 +388,7 @@
 
             <div class="module">
                 <h2>Module 3: From the Mall to the Station</h2>
-                <div class="module-content">
-                    <div class="lesson">
+                <div class="module-content"> <div class="lesson">
                         <div class="lesson-title">Lesson 1</div>
                         <div class="lesson-content">
                             <div class="content-item">Let's Talk Shop with AI</div>
@@ -385,10 +415,9 @@
                 </div>
             </div>
 
-            <div class="module">
+             <div class="module">
                 <h2>Module 4: Essential Travel Skills</h2>
-                <div class="module-content">
-                    <div class="lesson">
+                <div class="module-content"> <div class="lesson">
                         <div class="lesson-title">Lesson 1</div>
                         <div class="lesson-content">
                             <div class="content-item">Talking Text to Audio with Voicemaker</div>
@@ -419,11 +448,7 @@
             </div>
 
             <div class="module">
-                <h2>Final Module</h2>
-                <div class="module-content">
-                    <div class="content-item">Videogame Glitch into the MOOC</div>
-                    <div class="quiz-item">Videogame quiz</div>
-                </div>
+                <h2>Resources 🤖</h2> <div class="module-content"> <div class="content-item">Videogame G.I.M Glitch Into the MOOC</div> <div class="pdf-item">PDF FILE: Vocabulary AI Power-Up</div> <div class="pdf-item">PDF FILE: Vocabulary Out of the office</div> </div>
             </div>
         </div>
     </div>
@@ -466,14 +491,36 @@
             }
         }
 
-        // Initialize particles and modules
+        // Initialize particles and add click handlers for collapsible modules
         document.addEventListener('DOMContentLoaded', function() {
             createParticles();
 
-            // Make all modules permanently expanded
-            document.querySelectorAll('.module-content').forEach(content => {
-                content.style.maxHeight = 'none';
+            // Get all module titles except the foundation module
+            const moduleTitles = document.querySelectorAll('.module:not(.foundation) h2');
+
+            moduleTitles.forEach(title => {
+                title.addEventListener('click', function() {
+                    // Find the content div associated with this title
+                    const content = this.nextElementSibling;
+
+                    // Toggle the 'expanded' class
+                    content.classList.toggle('expanded');
+
+                    // Adjust max-height for smooth transition
+                    if (content.classList.contains('expanded')) {
+                        // Set max-height to the actual scroll height to allow smooth expansion
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    } else {
+                        content.style.maxHeight = '0'; // Collapse
+                    }
+                });
             });
+
+            // Ensure the Foundation module content is always expanded on load
+            const foundationContent = document.querySelector('.module.foundation .module-content');
+            if (foundationContent) {
+                 foundationContent.style.maxHeight = foundationContent.scrollHeight + 'px';
+            }
         });
     </script>
 </body>
