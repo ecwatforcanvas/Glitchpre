@@ -3,84 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Fringe Content</title>
     <style>
-        /* Basic styling to center the fringe container on the page */
-        body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh; /* Ensure the body takes at least the full viewport height */
-            background-color: #f0f0f0; /* Light background for contrast */
-        }
-
-        /* Style for the main container with specific dimensions and colors */
+        /* Minimalist, responsive banner styling for Moodle text area */
         .fringe-container {
-            width: 1920px; /* Specified width */
-            height: 260px; /* Specified height */
-            background-color: black; /* Black background */
-            color: white; /* White text color */
-            display: flex; /* Use flexbox for centering content */
-            justify-content: center; /* Center content horizontally */
-            align-items: center; /* Center content vertically */
-            font-size: 72px; /* Adjust font size for visibility */
-            font-family: sans-serif; /* Simple font family */
-            overflow: hidden; /* Hide content outside the clip-path */
-            cursor: pointer; /* Indicate that the element is clickable */
+            max-width: 100%;
+            height: auto;
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-family: sans-serif;
+            border-radius: 12px;
+            animation: circle-in-hesitate 2s cubic-bezier(.25, 1, .30, 1) both;
+            margin: 0 auto;
         }
 
-        /* Keyframe animation for the circle-in effect */
         @keyframes circle-in-hesitate {
             0% {
-                clip-path: circle(0%); /* Start with a zero-radius circle */
+                clip-path: circle(0%);
             }
             40% {
-                clip-path: circle(40%); /* Expand to 40% */
+                clip-path: circle(40%);
             }
             100% {
-                clip-path: circle(125%); /* Expand beyond the element to reveal fully */
+                clip-path: circle(125%);
             }
-        }
-
-        /* Apply the animation using the transition-style attribute selector */
-        [transition-style="in:circle:hesitate"] {
-            animation: 2.5s cubic-bezier(.25, 1, .30, 1) circle-in-hesitate both;
-            /*
-             animation: [duration] [timing-function] [delay] [iteration-count] [direction] [fill-mode] [play-state] [name]
-             2.5s: animation duration
-             cubic-bezier(.25, 1, .30, 1): timing function (hesitate effect)
-             circle-in-hesitate: name of the @keyframes rule
-             both: animation applies styles before (0%) and after (100%) its execution
-            */
         }
     </style>
 </head>
 <body>
-    <div class="fringe-container" id="clickableFringe">
-        <div class="content-text">
-            Content
-        </div>
+    <!-- Paste only this div into Moodle's HTML or text area tool -->
+    <div class="fringe-container">
+        Secuencia Didáctica
     </div>
-
-    <script>
-        // Get the clickable element by its ID
-        const fringeElement = document.getElementById('clickableFringe');
-
-        // Add a click event listener
-        fringeElement.addEventListener('click', () => {
-            // Check if the animation is already applied
-            if (!fringeElement.hasAttribute('transition-style')) {
-                // If not, add the attribute to trigger the animation
-                fringeElement.setAttribute('transition-style', 'in:circle:hesitate');
-
-                // Optional: Remove the attribute after the animation finishes
-                // This allows the animation to be triggered again on subsequent clicks
-                fringeElement.addEventListener('animationend', () => {
-                    fringeElement.removeAttribute('transition-style');
-                }, { once: true }); // Use { once: true } to remove the listener after it runs once
-            }
-        });
-    </script>
 </body>
 </html>
