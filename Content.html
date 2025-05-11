@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Fringe Content</title>
+    <style>
+        /* Basic styling to center the fringe container on the page */
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ensure the body takes at least the full viewport height */
+            background-color: #f0f0f0; /* Light background for contrast */
+        }
+
+        /* Style for the main container with specific dimensions and colors */
+        .fringe-container {
+            width: 1920px; /* Specified width */
+            height: 260px; /* Specified height */
+            background-color: black; /* Black background */
+            color: white; /* White text color */
+            display: flex; /* Use flexbox for centering content */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+            font-size: 72px; /* Adjust font size for visibility */
+            font-family: sans-serif; /* Simple font family */
+            overflow: hidden; /* Hide content outside the clip-path */
+            cursor: pointer; /* Indicate that the element is clickable */
+        }
+
+        /* Keyframe animation for the circle-in effect */
+        @keyframes circle-in-hesitate {
+            0% {
+                clip-path: circle(0%); /* Start with a zero-radius circle */
+            }
+            40% {
+                clip-path: circle(40%); /* Expand to 40% */
+            }
+            100% {
+                clip-path: circle(125%); /* Expand beyond the element to reveal fully */
+            }
+        }
+
+        /* Apply the animation using the transition-style attribute selector */
+        [transition-style="in:circle:hesitate"] {
+            animation: 2.5s cubic-bezier(.25, 1, .30, 1) circle-in-hesitate both;
+            /*
+             animation: [duration] [timing-function] [delay] [iteration-count] [direction] [fill-mode] [play-state] [name]
+             2.5s: animation duration
+             cubic-bezier(.25, 1, .30, 1): timing function (hesitate effect)
+             circle-in-hesitate: name of the @keyframes rule
+             both: animation applies styles before (0%) and after (100%) its execution
+            */
+        }
+    </style>
+</head>
+<body>
+    <div class="fringe-container" id="clickableFringe">
+        <div class="content-text">
+            Content
+        </div>
+    </div>
+
+    <script>
+        // Get the clickable element by its ID
+        const fringeElement = document.getElementById('clickableFringe');
+
+        // Add a click event listener
+        fringeElement.addEventListener('click', () => {
+            // Check if the animation is already applied
+            if (!fringeElement.hasAttribute('transition-style')) {
+                // If not, add the attribute to trigger the animation
+                fringeElement.setAttribute('transition-style', 'in:circle:hesitate');
+
+                // Optional: Remove the attribute after the animation finishes
+                // This allows the animation to be triggered again on subsequent clicks
+                fringeElement.addEventListener('animationend', () => {
+                    fringeElement.removeAttribute('transition-style');
+                }, { once: true }); // Use { once: true } to remove the listener after it runs once
+            }
+        });
+    </script>
+</body>
+</html>
